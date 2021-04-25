@@ -1,6 +1,7 @@
 package com.gleb.zemskoi.adverts.controller;
 
 import com.gleb.zemskoi.adverts.entity.Customer;
+import com.gleb.zemskoi.adverts.entity.common.RestResponseEntity;
 import com.gleb.zemskoi.adverts.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -15,17 +16,17 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @GetMapping("id")
-    public Customer findCustomerById(@RequestParam Long id) {
-        return customerService.findCustomerById(id);
+    public RestResponseEntity<Customer> findCustomerById(@RequestParam Long id) {
+        return new RestResponseEntity<>(customerService.findCustomerById(id));
     }
 
     @GetMapping("name")
-    public List<Customer> findCustomerByName(@RequestParam String name) {
-        return customerService.findCustomerByName(name);
+    public RestResponseEntity<List<Customer>> findCustomerByName(@RequestParam String name) {
+        return new RestResponseEntity<>(customerService.findCustomerByName(name));
     }
 
     @PostMapping("save")
-    public Customer saveCustomer(@Valid @RequestBody Customer customer) {
-        return customerService.saveCustomer(customer);
+    public RestResponseEntity<Customer> saveCustomer(@Valid @RequestBody Customer customer) {
+        return new RestResponseEntity<>(customerService.saveCustomer(customer));
     }
 }
