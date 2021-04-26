@@ -5,6 +5,7 @@ import com.gleb.zemskoi.adverts.entity.Advert;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -21,6 +22,7 @@ public class AdvertService {
     }
 
     public Advert saveAdvert(Advert advert) {
+        advert.setCreateDate(LocalDateTime.now());
         return advertRepository.save(advert);
     }
 }

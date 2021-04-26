@@ -7,7 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Data
 @RequiredArgsConstructor
@@ -29,6 +29,5 @@ public class Advert {
     private String description;
     @NotNull
     private BigDecimal price;
-    @NotNull
-    private Date createDate;
+    private LocalDateTime createDate;
 }
