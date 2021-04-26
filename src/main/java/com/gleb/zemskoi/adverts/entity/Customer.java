@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -18,8 +18,8 @@ import java.util.List;
 @Entity
 public class Customer {
     @Id
-    @GeneratedValue
     @NonNull
+    @GeneratedValue
     private Long id;
     @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
     @JsonManagedReference
@@ -31,5 +31,5 @@ public class Customer {
     @NotEmpty
     private String email;
     @NotNull
-    private Date birthDate;
+    private LocalDate birthDate;
 }

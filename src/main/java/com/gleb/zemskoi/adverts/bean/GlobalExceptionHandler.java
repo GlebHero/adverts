@@ -6,19 +6,17 @@ import com.gleb.zemskoi.adverts.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.sql.SQLException;
 import java.time.Clock;
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collections;
 
 @ControllerAdvice
 @RequiredArgsConstructor
-public class GlobalExceptionHandler {
+public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     private final Clock clock;
 
 //    @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -36,6 +34,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<Object> handleNotFoundException(NotFoundException ex) {
+        RestResponseEntity<Object> restResponseEntity = new RestResponseEntity<>(Collections.singletonList(new Error(ex.getClass().getName(), ex.getMessage())));
+        return new ResponseEntity<>(restResponseEntity, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(HttpClientErrorException.BadRequest.class)
+    public ResponseEntity<Object> handleBadRequestException(HttpClientErrorException.BadRequest ex) {
         RestResponseEntity<Object> restResponseEntity = new RestResponseEntity<>(Collections.singletonList(new Error(ex.getClass().getName(), ex.getMessage())));
         return new ResponseEntity<>(restResponseEntity, HttpStatus.INTERNAL_SERVER_ERROR);
     }
