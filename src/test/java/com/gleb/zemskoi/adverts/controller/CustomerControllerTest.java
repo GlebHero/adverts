@@ -2,7 +2,7 @@ package com.gleb.zemskoi.adverts.controller;
 
 import com.gleb.zemskoi.adverts.AdvertsApplication;
 import com.gleb.zemskoi.adverts.config.ContainersEnvironment;
-import com.gleb.zemskoi.adverts.entity.Customer;
+import com.gleb.zemskoi.adverts.entity.db.Customer;
 import com.gleb.zemskoi.adverts.entity.common.RestResponseEntity;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Objects;
 
@@ -41,7 +40,6 @@ class CustomerControllerTest extends ContainersEnvironment {
         expectedCustomer.setEmail("ivpet@mail.ru");
         expectedCustomer.setLastName("Petrov");
         expectedCustomer.setBirthDate(LocalDate.parse("2001-01-01"));
-        expectedCustomer.setAdvertList(new ArrayList<>());
         ResponseEntity<RestResponseEntity<Customer>> exchange = restTemplate.exchange("/customer/id?id=1", HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), new ParameterizedTypeReference<>() {});
         assertEquals(expectedCustomer, Objects.requireNonNull(exchange.getBody()).getData().getResult());
     }

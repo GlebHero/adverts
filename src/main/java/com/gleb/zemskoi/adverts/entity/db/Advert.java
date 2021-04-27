@@ -1,33 +1,36 @@
-package com.gleb.zemskoi.adverts.entity;
+package com.gleb.zemskoi.adverts.entity.db;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
-@RequiredArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
-@ToString(exclude = "customer")
 public class Advert {
     @Id
-    @NonNull
     @GeneratedValue
     private Long id;
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JsonBackReference
+    @Column(nullable = false)
+    private UUID uuid;
     @NotNull
-    private Customer customer;
-    @NotEmpty
+    @Column(nullable = false)
+    @Basic
+    private UUID customerUuid;
+    @NotBlank
     private String title;
-    @NotEmpty
+    @NotBlank
     private String description;
     @NotNull
     private BigDecimal price;
+    @NotNull
     private LocalDateTime createDate;
 }
