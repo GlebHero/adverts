@@ -17,7 +17,7 @@ import java.util.UUID;
 public class AdvertController {
     private final AdvertService advertService;
 
-    @GetMapping(value = "id", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "uuid", produces = MediaType.APPLICATION_JSON_VALUE)
     public RestResponseEntity<AdvertDto> findAdvertById(@RequestParam UUID uuid) {
         return new RestResponseEntity<>(advertService.findAdvertByUuid(uuid));
     }

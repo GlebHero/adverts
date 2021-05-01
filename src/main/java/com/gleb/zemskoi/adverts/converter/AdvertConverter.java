@@ -10,8 +10,7 @@ import java.util.UUID;
 
 @Mapper( imports = UUID.class )
 public interface AdvertConverter {
-    @Mappings({@Mapping(target="customerUuid", source = "customerUuid")})
+    @Mappings({@Mapping(target="customerUuid", source = "customer.uuid")})
     AdvertDto toAdvertDto(Advert advert);
-    @Mappings({@Mapping(target="customerUuid", source = "customerUuid")})
     Advert toAdvert(AdvertDto advert);
 }

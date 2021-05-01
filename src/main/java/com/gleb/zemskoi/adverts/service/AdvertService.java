@@ -1,8 +1,11 @@
 package com.gleb.zemskoi.adverts.service;
 
 import com.gleb.zemskoi.adverts.converter.AdvertConverter;
+import com.gleb.zemskoi.adverts.converter.CustomerConverter;
 import com.gleb.zemskoi.adverts.dao.AdvertRepository;
+import com.gleb.zemskoi.adverts.dao.CustomerRepository;
 import com.gleb.zemskoi.adverts.entity.db.Advert;
+import com.gleb.zemskoi.adverts.entity.db.Customer;
 import com.gleb.zemskoi.adverts.entity.dto.AdvertDto;
 import lombok.Data;
 import org.springframework.stereotype.Service;
@@ -16,7 +19,9 @@ import java.util.UUID;
 @Service
 public class AdvertService {
     private final AdvertRepository advertRepository;
+    private final CustomerRepository customerRepository;
     private final AdvertConverter advertConverter;
+    private final CustomerConverter customerConverter;
 
     public AdvertDto findAdvertByUuid(UUID uuid) {
         return advertConverter.toAdvertDto(advertRepository.findAdvertByUuid(uuid));
@@ -32,6 +37,9 @@ public class AdvertService {
         Advert advert = advertConverter.toAdvert(advertDto);
         advert.setCreateDate(LocalDateTime.now());
         advert.setUuid(UUID.randomUUID());
+        Customer customer = customerRepository.findCustomerByUuid(advertDto.getCustomerUuid());
+        advert.setCustomer(customer);
+        advertRepository.save(advert);
         return advertConverter.toAdvertDto(advertRepository.save(advert));
     }
 }
