@@ -8,7 +8,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -17,14 +16,9 @@ import java.util.UUID;
 public class CustomerController {
     private final CustomerService customerService;
 
-    @GetMapping(value = "id", produces = MediaType.APPLICATION_JSON_VALUE)
-    public RestResponseEntity<CustomerDto> findCustomerById(@RequestParam UUID uuid) {
-        return new RestResponseEntity<>(customerService.findCustomerByUuid(uuid));
-    }
-
-    @GetMapping(value = "name", produces = MediaType.APPLICATION_JSON_VALUE)
-    public RestResponseEntity<List<CustomerDto>> findCustomerByName(@RequestParam String name) {
-        return new RestResponseEntity<>(customerService.findCustomerByName(name));
+    @GetMapping(value = "/customerUuid/{customerUuid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public RestResponseEntity<CustomerDto> findCustomerByUuid(@PathVariable UUID customerUuid) {
+        return new RestResponseEntity<>(customerService.findCustomerByUuid(customerUuid));
     }
 
     @PostMapping(value = "save", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

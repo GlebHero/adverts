@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.time.Clock;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -22,13 +21,6 @@ import java.util.List;
 @ControllerAdvice
 @RequiredArgsConstructor
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
-    private final Clock clock;
-
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<Object> handleNotFoundException(NotFoundException ex) {
-        RestResponseEntity<Object> restResponseEntity = new RestResponseEntity<>(Collections.singletonList(new Error(ex.getClass().getName(), ex.getMessage())));
-        return new ResponseEntity<>(restResponseEntity, HttpStatus.BAD_REQUEST);
-    }
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
@@ -43,18 +35,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(restResponseEntity, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(Throwable.class)
-    public ResponseEntity<Object> handleAnyException(Throwable ex) {
-        RestResponseEntity<Object> restResponseEntity = new RestResponseEntity<>(Collections.singletonList(new Error(ex.getClass().getName(), ex.getMessage())));
-        return new ResponseEntity<>(restResponseEntity, HttpStatus.INTERNAL_SERVER_ERROR);
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<Object> handleNotFoundException(NotFoundException ex) {
+        RestResponseEntity<Object> restResponseEntity = new RestResponseEntity<>(Collections.singletonList(new Error(ex.getClass().getSimpleName(), ex.getMessage())));
+        return new ResponseEntity<>(restResponseEntity, HttpStatus.BAD_REQUEST);
     }
 
-//    @ExceptionHandler(SQLException.class)
-//    public ResponseEntity<Object> handleNotFoundException(SQLException ex) {
-//        Map<String, Object> body = new LinkedHashMap<>();
-//        body.put("timestamp", LocalDateTime.now(clock));
-//        body.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
-//        body.put("error", ex.getMessage());
-//        return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
-//    }
+    @ExceptionHandler(Throwable.class)
+    public ResponseEntity<Object> handleAnyException(Throwable ex) {
+        RestResponseEntity<Object> restResponseEntity = new RestResponseEntity<>(Collections.singletonList(new Error(ex.getClass().getSimpleName(), ex.getMessage())));
+        return new ResponseEntity<>(restResponseEntity, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

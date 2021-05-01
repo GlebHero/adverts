@@ -17,14 +17,14 @@ import java.util.UUID;
 public class AdvertController {
     private final AdvertService advertService;
 
-    @GetMapping(value = "uuid", produces = MediaType.APPLICATION_JSON_VALUE)
-    public RestResponseEntity<AdvertDto> findAdvertById(@RequestParam UUID uuid) {
-        return new RestResponseEntity<>(advertService.findAdvertByUuid(uuid));
+    @GetMapping(value = "/advertUuid/{advertUuid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public RestResponseEntity<AdvertDto> findAdvertByUuid(@PathVariable(name = "advertUuid") UUID advertUuid) {
+        return new RestResponseEntity<>(advertService.findAdvertByUuid(advertUuid));
     }
 
-    @GetMapping(value = "costumerId", produces = MediaType.APPLICATION_JSON_VALUE)
-    public RestResponseEntity<List<AdvertDto>> findAdvertByCustomerId(@RequestParam UUID uuid) {
-        return new RestResponseEntity<>(advertService.findAdvertByCustomerId(uuid));
+    @GetMapping(value = "/customerUuid/{customerUuid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public RestResponseEntity<List<AdvertDto>> findAdvertByCustomerUuid(@PathVariable(name = "customerUuid") UUID customerUuid) {
+        return new RestResponseEntity<>(advertService.findAdvertByCustomerId(customerUuid));
     }
 
     @PostMapping(value = "save", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

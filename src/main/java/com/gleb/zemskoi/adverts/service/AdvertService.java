@@ -7,12 +7,14 @@ import com.gleb.zemskoi.adverts.dao.CustomerRepository;
 import com.gleb.zemskoi.adverts.entity.db.Advert;
 import com.gleb.zemskoi.adverts.entity.db.Customer;
 import com.gleb.zemskoi.adverts.entity.dto.AdvertDto;
+import com.gleb.zemskoi.adverts.exception.NotFoundException;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Data
@@ -24,7 +26,8 @@ public class AdvertService {
     private final CustomerConverter customerConverter;
 
     public AdvertDto findAdvertByUuid(UUID uuid) {
-        return advertConverter.toAdvertDto(advertRepository.findAdvertByUuid(uuid));
+        Advert advert = Optional.ofNullable(advertRepository.findAdvertByUuid(uuid)).orElseThrow(() -> new NotFoundException("advert", uuid.toString()));
+        return advertConverter.toAdvertDto(advert);
     }
 
     public List<AdvertDto> findAdvertByCustomerId(UUID uuid) {

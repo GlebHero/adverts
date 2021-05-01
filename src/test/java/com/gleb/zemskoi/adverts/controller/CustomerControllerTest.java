@@ -1,9 +1,11 @@
 package com.gleb.zemskoi.adverts.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gleb.zemskoi.adverts.AdvertsApplication;
 import com.gleb.zemskoi.adverts.config.ContainersEnvironment;
-import com.gleb.zemskoi.adverts.entity.db.Customer;
 import com.gleb.zemskoi.adverts.entity.common.RestResponseEntity;
+import com.gleb.zemskoi.adverts.entity.dto.CustomerDto;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,33 +33,38 @@ class CustomerControllerTest extends ContainersEnvironment {
     @Autowired
     private TestRestTemplate restTemplate;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @Test
-    public void findCustomerById() {
-        createCustomer("customer1.json");
-        Customer expectedCustomer = new Customer();
-        expectedCustomer.setId(1L);
-        expectedCustomer.setName("Ivan");
-        expectedCustomer.setEmail("ivpet@mail.ru");
-        expectedCustomer.setLastName("Petrov");
-        expectedCustomer.setBirthDate(LocalDate.parse("2001-01-01"));
-        ResponseEntity<RestResponseEntity<Customer>> exchange = restTemplate.exchange("/customer/id?id=1", HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), new ParameterizedTypeReference<>() {});
-        assertEquals(expectedCustomer, Objects.requireNonNull(exchange.getBody()).getData().getResult());
+    public void findCustomerByUuid() {
+        CustomerDto createdCustomerDto = createCustomer("customer1.json");
+        CustomerDto expectedCustomerDto = new CustomerDto();
+        expectedCustomerDto.setUuid(createdCustomerDto.getUuid());
+        expectedCustomerDto.setName("Ivan");
+        expectedCustomerDto.setEmail("ivpet@mail.ru");
+        expectedCustomerDto.setLastName("Petrov");
+        expectedCustomerDto.setBirthDate(LocalDate.parse("2001-01-01"));
+        ResponseEntity<RestResponseEntity<CustomerDto>> exchange = restTemplate.exchange("/customer/customerUuid/"+createdCustomerDto.getUuid().toString(), HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), new ParameterizedTypeReference<>() {});
+        assertEquals(expectedCustomerDto, Objects.requireNonNull(exchange.getBody()).getData().getResult());
     }
 
     @SneakyThrows
-    private void createCustomer(String fileName) {
+    private CustomerDto createCustomer(String fileName) {
         //todo configure testresttemplate for jackson
 //        Customer customer = getClassPathResourceAsObject("/dto/customer/" + fileName, new TypeReference<>() {});
         String customer = Files.readString(Path.of("src/test/resources/dto/customer/" + fileName));
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        restTemplate.exchange(
+        ResponseEntity<String> result = restTemplate.exchange(
                 "/customer/save",
                 HttpMethod.POST,
                 new HttpEntity<>(customer, HttpHeaders.writableHttpHeaders(headers)),
                 new ParameterizedTypeReference<>() {
                 }
         );
+        RestResponseEntity<CustomerDto> restResponseEntity = objectMapper.readValue(result.getBody(), new TypeReference<>() {});
+        return restResponseEntity.getData().getResult();
     }
 }
