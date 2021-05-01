@@ -1,35 +1,34 @@
 package com.gleb.zemskoi.adverts.controller;
 
-import com.gleb.zemskoi.adverts.entity.Advert;
-import com.gleb.zemskoi.adverts.entity.common.Data;
 import com.gleb.zemskoi.adverts.entity.common.RestResponseEntity;
+import com.gleb.zemskoi.adverts.entity.dto.AdvertDto;
 import com.gleb.zemskoi.adverts.service.AdvertService;
-import com.gleb.zemskoi.adverts.service.CustomerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/advert")
 @RequiredArgsConstructor
 public class AdvertController {
     private final AdvertService advertService;
-    private final CustomerService customerService;
 
-    @GetMapping("id")
-    public RestResponseEntity<Advert> findAdvertById(@RequestParam Long id) {
-        return new RestResponseEntity<>(advertService.findAdvertById(id));
+    @GetMapping(value = "/advertUuid/{advertUuid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public RestResponseEntity<AdvertDto> findAdvertByUuid(@PathVariable(name = "advertUuid") UUID advertUuid) {
+        return new RestResponseEntity<>(advertService.findAdvertByUuid(advertUuid));
     }
 
-    @GetMapping("costumerId")
-    public RestResponseEntity<List<Advert>> findAdvertByCustomerId(@RequestParam Long id) {
-        return new RestResponseEntity<>(advertService.findAdvertByCustomerId(id));
+    @GetMapping(value = "/customerUuid/{customerUuid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public RestResponseEntity<List<AdvertDto>> findAdvertByCustomerUuid(@PathVariable(name = "customerUuid") UUID customerUuid) {
+        return new RestResponseEntity<>(advertService.findAdvertByCustomerId(customerUuid));
     }
 
-    @PostMapping("save")
-    public RestResponseEntity<Advert> saveAdvert(@Valid @RequestBody Advert advert) {
+    @PostMapping(value = "save", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public RestResponseEntity<AdvertDto> saveAdvert(@Valid @RequestBody AdvertDto advert) {
         return new RestResponseEntity<>(advertService.saveAdvert(advert));
     }
 }

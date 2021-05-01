@@ -1,13 +1,14 @@
 package com.gleb.zemskoi.adverts.controller;
 
-import com.gleb.zemskoi.adverts.entity.Customer;
 import com.gleb.zemskoi.adverts.entity.common.RestResponseEntity;
+import com.gleb.zemskoi.adverts.entity.dto.CustomerDto;
 import com.gleb.zemskoi.adverts.service.CustomerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/customer")
@@ -15,18 +16,13 @@ import java.util.List;
 public class CustomerController {
     private final CustomerService customerService;
 
-    @GetMapping("id")
-    public RestResponseEntity<Customer> findCustomerById(@RequestParam Long id) {
-        return new RestResponseEntity<>(customerService.findCustomerById(id));
+    @GetMapping(value = "/customerUuid/{customerUuid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public RestResponseEntity<CustomerDto> findCustomerByUuid(@PathVariable UUID customerUuid) {
+        return new RestResponseEntity<>(customerService.findCustomerByUuid(customerUuid));
     }
 
-    @GetMapping("name")
-    public RestResponseEntity<List<Customer>> findCustomerByName(@RequestParam String name) {
-        return new RestResponseEntity<>(customerService.findCustomerByName(name));
-    }
-
-    @PostMapping("save")
-    public RestResponseEntity<Customer> saveCustomer(@Valid @RequestBody Customer customer) {
+    @PostMapping(value = "save", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public RestResponseEntity<CustomerDto> saveCustomer(@Valid @RequestBody CustomerDto customer) {
         return new RestResponseEntity<>(customerService.saveCustomer(customer));
     }
 }
