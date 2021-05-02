@@ -61,4 +61,13 @@ public class AdvertService {
         advertByUuid.setUpdateDate(LocalDateTime.now());
         advertRepository.save(advertByUuid);
     }
+
+    public AdvertDto updateAdvertByUuid(AdvertDto advertDto) {
+        //todo check jwt. Создатель ли объявы пытается ее апдейтить.
+        Advert advertByUuid = advertRepository.findAdvertByUuid(advertDto.getUuid());
+        advertByUuid.setUpdateDate(LocalDateTime.now());
+        advertByUuid = advertConverter.toAdvertClone(advertDto, advertByUuid);
+        advertRepository.save(advertByUuid);
+        return advertConverter.toAdvertDto(advertByUuid);
+    }
 }

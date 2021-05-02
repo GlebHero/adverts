@@ -40,7 +40,7 @@ public class Advert {
     @Enumerated(EnumType.STRING)
     private AdvertStatusEnum advertStatusEnum;
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(referencedColumnName = "uuid", name = "customer_uuid", nullable = false)
+    @JoinColumn(referencedColumnName = "uuid", name = "customer_uuid", nullable = false, updatable = false)
     @JsonBackReference
     private Customer customer;
 }

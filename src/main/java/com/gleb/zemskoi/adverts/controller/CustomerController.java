@@ -16,7 +16,7 @@ import java.util.UUID;
 public class CustomerController {
     private final CustomerService customerService;
 
-    @GetMapping(value = "/customerUuid/{customerUuid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "customerUuid/{customerUuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public RestResponseEntity<CustomerDto> findCustomerByUuid(@PathVariable UUID customerUuid) {
         return new RestResponseEntity<>(customerService.findCustomerByUuid(customerUuid));
     }
@@ -26,7 +26,7 @@ public class CustomerController {
         return new RestResponseEntity<>(customerService.saveCustomer(customer));
     }
 
-    @DeleteMapping(value = "/customerUuid/{customerUuid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "customerUuid/{customerUuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void blockCustomerByUuid(@PathVariable UUID customerUuid) {
         customerService.blockCustomerByUuid(customerUuid);
     }
