@@ -23,12 +23,18 @@ public class AdvertController {
     }
 
     @GetMapping(value = "/customerUuid/{customerUuid}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public RestResponseEntity<List<AdvertDto>> findAdvertByCustomerUuid(@PathVariable(name = "customerUuid") UUID customerUuid) {
-        return new RestResponseEntity<>(advertService.findAdvertByCustomerId(customerUuid));
+
+    public RestResponseEntity<List<AdvertDto>> findAdvertsByCustomerUuid(@PathVariable(name = "customerUuid") UUID customerUuid,
+                                                                         @RequestParam(required = false, name = "active", defaultValue = "false") Boolean active) {
+        return new RestResponseEntity<>(advertService.findAdvertsByCustomerId(customerUuid, active));
     }
 
     @PostMapping(value = "save", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public RestResponseEntity<AdvertDto> saveAdvert(@Valid @RequestBody AdvertDto advert) {
         return new RestResponseEntity<>(advertService.saveAdvert(advert));
+    }
+    @DeleteMapping(value = "/advertUuid/{advertUuid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void disableAdvertByUuid(@PathVariable(name = "advertUuid") UUID advertUuid) {
+        advertService.disableAdvertByUuid(advertUuid);
     }
 }

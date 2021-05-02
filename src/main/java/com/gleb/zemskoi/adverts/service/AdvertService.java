@@ -7,14 +7,13 @@ import com.gleb.zemskoi.adverts.dao.CustomerRepository;
 import com.gleb.zemskoi.adverts.entity.db.Advert;
 import com.gleb.zemskoi.adverts.entity.db.Customer;
 import com.gleb.zemskoi.adverts.entity.dto.AdvertDto;
-import com.gleb.zemskoi.adverts.exception.NotFoundException;
+import com.gleb.zemskoi.adverts.entity.enums.AdvertStatusEnum;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Data
@@ -26,23 +25,40 @@ public class AdvertService {
     private final CustomerConverter customerConverter;
 
     public AdvertDto findAdvertByUuid(UUID uuid) {
-        Advert advert = Optional.ofNullable(advertRepository.findAdvertByUuid(uuid)).orElseThrow(() -> new NotFoundException("advert", uuid.toString()));
+        Advert advert = advertRepository.findAdvertByUuid(uuid);
         return advertConverter.toAdvertDto(advert);
     }
 
-    public List<AdvertDto> findAdvertByCustomerId(UUID uuid) {
+    public List<AdvertDto> findAdvertsByCustomerId(UUID uuid, Boolean activeOnly) {
         List<AdvertDto> advertDtos = new ArrayList<>();
-        advertRepository.findAdvertByCustomerUuid(uuid).forEach(advert -> advertDtos.add(advertConverter.toAdvertDto(advert)));
+        if (activeOnly) {
+            advertRepository.findAdvertByCustomerUuid(uuid).stream()
+                    .filter(advert -> advert.getAdvertStatusEnum().equals(AdvertStatusEnum.OPEN))
+                    .forEach(advert -> advertDtos.add(advertConverter.toAdvertDto(advert)));
+
+        } else {
+            advertRepository.findAdvertByCustomerUuid(uuid)
+                    .forEach(advert -> advertDtos.add(advertConverter.toAdvertDto(advert)));
+        }
         return advertDtos;
     }
 
     public AdvertDto saveAdvert(AdvertDto advertDto) {
         Advert advert = advertConverter.toAdvert(advertDto);
-        advert.setCreateDate(LocalDateTime.now());
         advert.setUuid(UUID.randomUUID());
+        advert.setCreateDate(LocalDateTime.now());
+        advert.setUpdateDate(advert.getCreateDate());
+        advert.setAdvertStatusEnum(AdvertStatusEnum.REVIEW);
         Customer customer = customerRepository.findCustomerByUuid(advertDto.getCustomerUuid());
         advert.setCustomer(customer);
         advertRepository.save(advert);
         return advertConverter.toAdvertDto(advertRepository.save(advert));
+    }
+
+    public void disableAdvertByUuid(UUID uuid) {
+        Advert advertByUuid = advertRepository.findAdvertByUuid(uuid);
+        advertByUuid.setAdvertStatusEnum(AdvertStatusEnum.CLOSED);
+        advertByUuid.setUpdateDate(LocalDateTime.now());
+        advertRepository.save(advertByUuid);
     }
 }

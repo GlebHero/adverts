@@ -25,4 +25,9 @@ public class CustomerController {
     public RestResponseEntity<CustomerDto> saveCustomer(@Valid @RequestBody CustomerDto customer) {
         return new RestResponseEntity<>(customerService.saveCustomer(customer));
     }
+
+    @DeleteMapping(value = "/customerUuid/{customerUuid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void blockCustomerByUuid(@PathVariable UUID customerUuid) {
+        customerService.blockCustomerByUuid(customerUuid);
+    }
 }

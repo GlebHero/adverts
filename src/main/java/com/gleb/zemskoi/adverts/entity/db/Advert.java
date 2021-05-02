@@ -1,6 +1,7 @@
 package com.gleb.zemskoi.adverts.entity.db;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.gleb.zemskoi.adverts.entity.enums.AdvertStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -32,6 +33,12 @@ public class Advert {
     private BigDecimal price;
     @NotNull
     private LocalDateTime createDate;
+    @NotNull
+    private LocalDateTime updateDate;
+    @NotNull
+    @Column(name = "advert_status")
+    @Enumerated(EnumType.STRING)
+    private AdvertStatusEnum advertStatusEnum;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(referencedColumnName = "uuid", name = "customer_uuid", nullable = false)
     @JsonBackReference
