@@ -23,7 +23,7 @@ public class Advert {
     @Id
     @GeneratedValue
     private Long id;
-    @Column(nullable = false)
+    @Column(unique = true, nullable = false, updatable = false)
     private UUID uuid;
     @NotBlank
     private String title;
@@ -32,8 +32,12 @@ public class Advert {
     @NotNull
     private BigDecimal price;
     @NotNull
+    private String phoneNumber;
+    @NotNull
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createDate;
     @NotNull
+    @Column(nullable = false)
     private LocalDateTime updateDate;
     @NotNull
     @Column(name = "advert_status")

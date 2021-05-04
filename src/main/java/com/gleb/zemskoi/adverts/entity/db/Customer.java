@@ -31,10 +31,15 @@ public class Customer implements Serializable {
     private String lastName;
     @NotBlank
     private String email;
+    @NotBlank
+    private String phoneNumber;
     @NotNull
     private LocalDate birthDate;
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createDate;
+    @NotNull
+    @Column(nullable = false)
+    private LocalDateTime updateDate;
     @NotNull
     @Column(name = "customer_status")
     @Enumerated(EnumType.STRING)

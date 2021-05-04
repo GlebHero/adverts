@@ -4,6 +4,7 @@ import com.gleb.zemskoi.adverts.converter.AdvertConverter;
 import com.gleb.zemskoi.adverts.converter.CustomerConverter;
 import com.gleb.zemskoi.adverts.dao.AdvertRepository;
 import com.gleb.zemskoi.adverts.dao.CustomerRepository;
+import com.gleb.zemskoi.adverts.entity.common.RestResponseEntity;
 import com.gleb.zemskoi.adverts.entity.db.Advert;
 import com.gleb.zemskoi.adverts.entity.db.Customer;
 import com.gleb.zemskoi.adverts.entity.dto.AdvertDto;
@@ -62,12 +63,12 @@ public class AdvertService {
         advertRepository.save(advertByUuid);
     }
 
-    public AdvertDto updateAdvertByUuid(AdvertDto advertDto) {
+    public RestResponseEntity<AdvertDto> updateAdvertByUuid(AdvertDto advertDto) {
         //todo check jwt. Создатель ли объявы пытается ее апдейтить.
         Advert advertByUuid = advertRepository.findAdvertByUuid(advertDto.getUuid());
         advertByUuid.setUpdateDate(LocalDateTime.now());
         advertByUuid = advertConverter.toAdvertClone(advertDto, advertByUuid);
         advertRepository.save(advertByUuid);
-        return advertConverter.toAdvertDto(advertByUuid);
+        return new RestResponseEntity<>(advertConverter.toAdvertDto(advertByUuid));
     }
 }

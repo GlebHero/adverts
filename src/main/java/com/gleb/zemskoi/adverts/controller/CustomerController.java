@@ -22,12 +22,17 @@ public class CustomerController {
     }
 
     @PostMapping(value = "save", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public RestResponseEntity<CustomerDto> saveCustomer(@Valid @RequestBody CustomerDto customer) {
-        return new RestResponseEntity<>(customerService.saveCustomer(customer));
+    public RestResponseEntity<CustomerDto> saveCustomer(@Valid @RequestBody CustomerDto customerDto) {
+        return new RestResponseEntity<>(customerService.saveCustomer(customerDto));
     }
 
     @DeleteMapping(value = "customerUuid/{customerUuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void blockCustomerByUuid(@PathVariable UUID customerUuid) {
         customerService.blockCustomerByUuid(customerUuid);
+    }
+
+    @PutMapping(value = "update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public RestResponseEntity<CustomerDto> updateAdvertByUuid(@Valid @RequestBody CustomerDto customerDto) {
+        return customerService.updateCustomerByUuid(customerDto);
     }
 }

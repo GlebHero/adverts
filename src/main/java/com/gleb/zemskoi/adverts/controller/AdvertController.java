@@ -39,8 +39,8 @@ public class AdvertController {
         advertService.disableAdvertByUuid(advertUuid);
     }
 
-    @PutMapping(value = "update", produces = MediaType.APPLICATION_JSON_VALUE)
-    public AdvertDto updateAdvertByUuid(@Valid @RequestBody AdvertDto advertDto) {
+    @PutMapping(value = "update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public RestResponseEntity<AdvertDto> updateAdvertByUuid(@Valid @RequestBody AdvertDto advertDto) {
         return advertService.updateAdvertByUuid(advertDto);
     }
 }
