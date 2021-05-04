@@ -16,13 +16,23 @@ import java.util.UUID;
 public class CustomerController {
     private final CustomerService customerService;
 
-    @GetMapping(value = "/customerUuid/{customerUuid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "customerUuid/{customerUuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public RestResponseEntity<CustomerDto> findCustomerByUuid(@PathVariable UUID customerUuid) {
         return new RestResponseEntity<>(customerService.findCustomerByUuid(customerUuid));
     }
 
     @PostMapping(value = "save", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public RestResponseEntity<CustomerDto> saveCustomer(@Valid @RequestBody CustomerDto customer) {
-        return new RestResponseEntity<>(customerService.saveCustomer(customer));
+    public RestResponseEntity<CustomerDto> saveCustomer(@Valid @RequestBody CustomerDto customerDto) {
+        return new RestResponseEntity<>(customerService.saveCustomer(customerDto));
+    }
+
+    @DeleteMapping(value = "customerUuid/{customerUuid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void blockCustomerByUuid(@PathVariable UUID customerUuid) {
+        customerService.blockCustomerByUuid(customerUuid);
+    }
+
+    @PutMapping(value = "update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public RestResponseEntity<CustomerDto> updateAdvertByUuid(@Valid @RequestBody CustomerDto customerDto) {
+        return customerService.updateCustomerByUuid(customerDto);
     }
 }

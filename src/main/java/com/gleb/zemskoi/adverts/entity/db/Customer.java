@@ -1,6 +1,7 @@
 package com.gleb.zemskoi.adverts.entity.db;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.gleb.zemskoi.adverts.entity.enums.CustomerStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,7 +23,7 @@ public class Customer implements Serializable {
     @Id
     @GeneratedValue
     private Long id;
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, updatable = false)
     private UUID uuid;
     @NotBlank
     private String name;
@@ -30,10 +31,19 @@ public class Customer implements Serializable {
     private String lastName;
     @NotBlank
     private String email;
+    @NotBlank
+    private String phoneNumber;
     @NotNull
     private LocalDate birthDate;
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createDate;
+    @NotNull
+    @Column(nullable = false)
+    private LocalDateTime updateDate;
+    @NotNull
+    @Column(name = "customer_status")
+    @Enumerated(EnumType.STRING)
+    private CustomerStatusEnum customerStatusEnum;
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "customer")
     @JsonManagedReference
     private List<Advert> adverts;

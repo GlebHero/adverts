@@ -4,17 +4,18 @@ import com.gleb.zemskoi.adverts.converter.AdvertConverter;
 import com.gleb.zemskoi.adverts.converter.CustomerConverter;
 import com.gleb.zemskoi.adverts.dao.AdvertRepository;
 import com.gleb.zemskoi.adverts.dao.CustomerRepository;
+import com.gleb.zemskoi.adverts.entity.common.RestResponseEntity;
 import com.gleb.zemskoi.adverts.entity.db.Advert;
 import com.gleb.zemskoi.adverts.entity.db.Customer;
 import com.gleb.zemskoi.adverts.entity.dto.AdvertDto;
-import com.gleb.zemskoi.adverts.exception.NotFoundException;
+import com.gleb.zemskoi.adverts.entity.enums.AdvertStatusEnum;
+import com.gleb.zemskoi.adverts.mq.Producer;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Data
@@ -24,25 +25,70 @@ public class AdvertService {
     private final CustomerRepository customerRepository;
     private final AdvertConverter advertConverter;
     private final CustomerConverter customerConverter;
+    private final Producer producer;
+    private final AdvertFilter advertFilter;
 
     public AdvertDto findAdvertByUuid(UUID uuid) {
-        Advert advert = Optional.ofNullable(advertRepository.findAdvertByUuid(uuid)).orElseThrow(() -> new NotFoundException("advert", uuid.toString()));
+        Advert advert = advertRepository.findAdvertByUuid(uuid);
         return advertConverter.toAdvertDto(advert);
     }
 
-    public List<AdvertDto> findAdvertByCustomerId(UUID uuid) {
+    public List<AdvertDto> findAdvertsByCustomerId(UUID uuid, Boolean activeOnly) {
         List<AdvertDto> advertDtos = new ArrayList<>();
-        advertRepository.findAdvertByCustomerUuid(uuid).forEach(advert -> advertDtos.add(advertConverter.toAdvertDto(advert)));
+        if (activeOnly) {
+            advertRepository.findAdvertByCustomerUuid(uuid).stream()
+                    .filter(advert -> advert.getAdvertStatusEnum().equals(AdvertStatusEnum.OPEN))
+                    .forEach(advert -> advertDtos.add(advertConverter.toAdvertDto(advert)));
+
+        } else {
+            advertRepository.findAdvertByCustomerUuid(uuid)
+                    .forEach(advert -> advertDtos.add(advertConverter.toAdvertDto(advert)));
+        }
         return advertDtos;
     }
 
     public AdvertDto saveAdvert(AdvertDto advertDto) {
+        Advert advert = setValuesForNewAdvert(advertDto);
+        advert = advertRepository.save(advert);
+        producer.sendAdvertForReview(advert);
+        return advertConverter.toAdvertDto(advert);
+    }
+
+    public void disableAdvertByUuid(UUID uuid) {
+        Advert advertByUuid = advertRepository.findAdvertByUuid(uuid);
+        advertByUuid.setAdvertStatusEnum(AdvertStatusEnum.CLOSED);
+        advertByUuid.setUpdateDate(LocalDateTime.now());
+        advertRepository.save(advertByUuid);
+    }
+
+    public RestResponseEntity<AdvertDto> updateAdvertByUuid(AdvertDto advertDto) {
+        //todo check jwt. Создатель ли объявы пытается ее апдейтить.
+        Advert advertByUuid = advertRepository.findAdvertByUuid(advertDto.getUuid());
+        advertByUuid.setUpdateDate(LocalDateTime.now());
+        advertByUuid = advertConverter.toAdvertClone(advertDto, advertByUuid);
+        advertRepository.save(advertByUuid);
+        return new RestResponseEntity<>(advertConverter.toAdvertDto(advertByUuid));
+    }
+
+
+    public void changeAdvertStatus(Advert advert) {
+        if (advertFilter.containsBadWord(advert)) {
+            advert.setAdvertStatusEnum(AdvertStatusEnum.CLOSED);
+        } else {
+            advert.setAdvertStatusEnum(AdvertStatusEnum.OPEN);
+        }
+        advertRepository.save(advert);
+    }
+
+    private Advert setValuesForNewAdvert(AdvertDto advertDto) {
         Advert advert = advertConverter.toAdvert(advertDto);
-        advert.setCreateDate(LocalDateTime.now());
         advert.setUuid(UUID.randomUUID());
+        advert.setCreateDate(LocalDateTime.now());
+        advert.setUpdateDate(advert.getCreateDate());
+        advert.setAdvertStatusEnum(AdvertStatusEnum.REVIEW);
         Customer customer = customerRepository.findCustomerByUuid(advertDto.getCustomerUuid());
         advert.setCustomer(customer);
-        advertRepository.save(advert);
-        return advertConverter.toAdvertDto(advertRepository.save(advert));
+        return advert;
     }
+
 }
