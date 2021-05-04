@@ -2,6 +2,7 @@ package com.gleb.zemskoi.adverts.controller;
 
 import com.gleb.zemskoi.adverts.entity.common.RestResponseEntity;
 import com.gleb.zemskoi.adverts.entity.dto.AdvertDto;
+import com.gleb.zemskoi.adverts.entity.filter.AdvertFilter;
 import com.gleb.zemskoi.adverts.service.AdvertService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -42,5 +43,10 @@ public class AdvertController {
     @PutMapping(value = "update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public RestResponseEntity<AdvertDto> updateAdvertByUuid(@Valid @RequestBody AdvertDto advertDto) {
         return advertService.updateAdvertByUuid(advertDto);
+    }
+
+    @PostMapping(value = "filter", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public RestResponseEntity<List<AdvertDto>> filterAdverts(@RequestBody List<AdvertFilter> advertFilters) {
+        return advertService.filterAdverts(advertFilters);
     }
 }

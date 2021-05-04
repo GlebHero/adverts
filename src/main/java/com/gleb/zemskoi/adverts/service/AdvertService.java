@@ -9,6 +9,7 @@ import com.gleb.zemskoi.adverts.entity.db.Advert;
 import com.gleb.zemskoi.adverts.entity.db.Customer;
 import com.gleb.zemskoi.adverts.entity.dto.AdvertDto;
 import com.gleb.zemskoi.adverts.entity.enums.AdvertStatusEnum;
+import com.gleb.zemskoi.adverts.entity.filter.AdvertFilter;
 import com.gleb.zemskoi.adverts.mq.Producer;
 import lombok.Data;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,7 @@ public class AdvertService {
     private final AdvertConverter advertConverter;
     private final CustomerConverter customerConverter;
     private final Producer producer;
-    private final AdvertFilter advertFilter;
+    private final AdvertStopWordService advertStopWordService;
 
     public AdvertDto findAdvertByUuid(UUID uuid) {
         Advert advert = advertRepository.findAdvertByUuid(uuid);
@@ -72,7 +73,7 @@ public class AdvertService {
 
 
     public void changeAdvertStatus(Advert advert) {
-        if (advertFilter.containsBadWord(advert)) {
+        if (advertStopWordService.containsBadWord(advert)) {
             advert.setAdvertStatusEnum(AdvertStatusEnum.CLOSED);
         } else {
             advert.setAdvertStatusEnum(AdvertStatusEnum.OPEN);
@@ -91,4 +92,13 @@ public class AdvertService {
         return advert;
     }
 
+    public RestResponseEntity<List<AdvertDto>> filterAdverts(List<AdvertFilter> advertFilters) {
+        List<Advert> allAdverts = advertRepository.findAll();
+        List<AdvertDto> advertDtos = new ArrayList<>();
+        for (AdvertFilter advertFilter : advertFilters) {
+            allAdverts = advertFilter.filter(allAdverts);
+        }
+        allAdverts.forEach(advert -> advertDtos.add(advertConverter.toAdvertDto(advert)));
+        return new RestResponseEntity<>(advertDtos);
+    }
 }
