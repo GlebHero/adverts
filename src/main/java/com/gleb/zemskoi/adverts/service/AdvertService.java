@@ -9,6 +9,7 @@ import com.gleb.zemskoi.adverts.entity.db.Advert;
 import com.gleb.zemskoi.adverts.entity.db.Customer;
 import com.gleb.zemskoi.adverts.entity.dto.AdvertDto;
 import com.gleb.zemskoi.adverts.entity.enums.AdvertStatusEnum;
+import com.gleb.zemskoi.adverts.mq.Producer;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,8 @@ public class AdvertService {
     private final CustomerRepository customerRepository;
     private final AdvertConverter advertConverter;
     private final CustomerConverter customerConverter;
+    private final Producer producer;
+    private final AdvertFilter advertFilter;
 
     public AdvertDto findAdvertByUuid(UUID uuid) {
         Advert advert = advertRepository.findAdvertByUuid(uuid);
@@ -45,15 +48,10 @@ public class AdvertService {
     }
 
     public AdvertDto saveAdvert(AdvertDto advertDto) {
-        Advert advert = advertConverter.toAdvert(advertDto);
-        advert.setUuid(UUID.randomUUID());
-        advert.setCreateDate(LocalDateTime.now());
-        advert.setUpdateDate(advert.getCreateDate());
-        advert.setAdvertStatusEnum(AdvertStatusEnum.REVIEW);
-        Customer customer = customerRepository.findCustomerByUuid(advertDto.getCustomerUuid());
-        advert.setCustomer(customer);
-        advertRepository.save(advert);
-        return advertConverter.toAdvertDto(advertRepository.save(advert));
+        Advert advert = setValuesForNewAdvert(advertDto);
+        advert = advertRepository.save(advert);
+        producer.sendAdvertForReview(advert);
+        return advertConverter.toAdvertDto(advert);
     }
 
     public void disableAdvertByUuid(UUID uuid) {
@@ -71,4 +69,26 @@ public class AdvertService {
         advertRepository.save(advertByUuid);
         return new RestResponseEntity<>(advertConverter.toAdvertDto(advertByUuid));
     }
+
+
+    public void changeAdvertStatus(Advert advert) {
+        if (advertFilter.containsBadWord(advert)) {
+            advert.setAdvertStatusEnum(AdvertStatusEnum.CLOSED);
+        } else {
+            advert.setAdvertStatusEnum(AdvertStatusEnum.OPEN);
+        }
+        advertRepository.save(advert);
+    }
+
+    private Advert setValuesForNewAdvert(AdvertDto advertDto) {
+        Advert advert = advertConverter.toAdvert(advertDto);
+        advert.setUuid(UUID.randomUUID());
+        advert.setCreateDate(LocalDateTime.now());
+        advert.setUpdateDate(advert.getCreateDate());
+        advert.setAdvertStatusEnum(AdvertStatusEnum.REVIEW);
+        Customer customer = customerRepository.findCustomerByUuid(advertDto.getCustomerUuid());
+        advert.setCustomer(customer);
+        return advert;
+    }
+
 }

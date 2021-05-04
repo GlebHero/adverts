@@ -32,8 +32,6 @@ public class Advert {
     @NotNull
     private BigDecimal price;
     @NotNull
-    private String phoneNumber;
-    @NotNull
     @Column(nullable = false, updatable = false)
     private LocalDateTime createDate;
     @NotNull

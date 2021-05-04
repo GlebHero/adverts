@@ -14,11 +14,14 @@ import java.util.UUID;
 public class CustomerDto {
     private UUID uuid;
     @NotBlank
+    @Size(max = 100)
     private String name;
     @NotBlank
+    @Size(max = 100)
     private String lastName;
     @NotBlank
     @Email
+    @Size(max = 100)
     private String email;
     @NotBlank
     @Size(min = 10, max = 10)
