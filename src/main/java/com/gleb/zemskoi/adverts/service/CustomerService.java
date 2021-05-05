@@ -2,7 +2,6 @@ package com.gleb.zemskoi.adverts.service;
 
 import com.gleb.zemskoi.adverts.converter.CustomerConverter;
 import com.gleb.zemskoi.adverts.dao.CustomerRepository;
-import com.gleb.zemskoi.adverts.entity.common.RestResponseEntity;
 import com.gleb.zemskoi.adverts.entity.db.Customer;
 import com.gleb.zemskoi.adverts.entity.dto.CustomerDto;
 import com.gleb.zemskoi.adverts.entity.enums.CustomerStatusEnum;
@@ -39,11 +38,11 @@ public class CustomerService {
         return customerConverter.toCustomerDto(customerRepository.save(customer));
     }
 
-    public RestResponseEntity<CustomerDto> updateCustomerByUuid(CustomerDto customerDto) {
+    public CustomerDto updateCustomerByUuid(CustomerDto customerDto) {
         Customer customerByUuid = customerRepository.findCustomerByUuid(customerDto.getUuid());
         customerByUuid.setUpdateDate(LocalDateTime.now());
         Customer customer = customerConverter.toCustomerClone(customerDto, customerByUuid);
         customerRepository.save(customer);
-        return new RestResponseEntity<>(customerConverter.toCustomerDto(customer));
+        return customerConverter.toCustomerDto(customer);
     }
 }

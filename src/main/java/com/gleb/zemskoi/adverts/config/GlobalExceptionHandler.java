@@ -1,4 +1,4 @@
-package com.gleb.zemskoi.adverts.bean;
+package com.gleb.zemskoi.adverts.config;
 
 import com.gleb.zemskoi.adverts.entity.common.Error;
 import com.gleb.zemskoi.adverts.entity.common.RestResponseEntity;

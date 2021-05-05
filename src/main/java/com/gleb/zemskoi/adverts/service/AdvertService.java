@@ -62,13 +62,13 @@ public class AdvertService {
         advertRepository.save(advertByUuid);
     }
 
-    public RestResponseEntity<AdvertDto> updateAdvertByUuid(AdvertDto advertDto) {
+    public AdvertDto updateAdvertByUuid(AdvertDto advertDto) {
         //todo check jwt. Создатель ли объявы пытается ее апдейтить.
         Advert advertByUuid = advertRepository.findAdvertByUuid(advertDto.getUuid());
         advertByUuid.setUpdateDate(LocalDateTime.now());
         advertByUuid = advertConverter.toAdvertClone(advertDto, advertByUuid);
         advertRepository.save(advertByUuid);
-        return new RestResponseEntity<>(advertConverter.toAdvertDto(advertByUuid));
+        return advertConverter.toAdvertDto(advertByUuid);
     }
 
 
@@ -92,13 +92,13 @@ public class AdvertService {
         return advert;
     }
 
-    public RestResponseEntity<List<AdvertDto>> filterAdverts(List<AdvertFilter> advertFilters) {
+    public List<AdvertDto> filterAdverts(List<AdvertFilter> advertFilters) {
         List<Advert> allAdverts = advertRepository.findAll();
         List<AdvertDto> advertDtos = new ArrayList<>();
         for (AdvertFilter advertFilter : advertFilters) {
             allAdverts = advertFilter.filter(allAdverts);
         }
         allAdverts.forEach(advert -> advertDtos.add(advertConverter.toAdvertDto(advert)));
-        return new RestResponseEntity<>(advertDtos);
+        return advertDtos;
     }
 }

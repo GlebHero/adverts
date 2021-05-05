@@ -1,6 +1,7 @@
 package com.gleb.zemskoi.adverts.mq;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gleb.zemskoi.adverts.aop.logging.LogJournal;
 import com.gleb.zemskoi.adverts.entity.db.Advert;
 import com.gleb.zemskoi.adverts.service.AdvertService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ public class Listener {
     private final ObjectMapper objectMapper;
 
     @SneakyThrows
+    @LogJournal
     @JmsListener(destination = "${new.advert.queue}")
     public void newAdvertForReview(String msg) {
         Advert advert = objectMapper.readValue(msg, Advert.class);
