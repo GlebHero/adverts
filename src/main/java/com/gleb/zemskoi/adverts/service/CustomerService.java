@@ -6,6 +6,7 @@ import com.gleb.zemskoi.adverts.entity.db.Customer;
 import com.gleb.zemskoi.adverts.entity.dto.CustomerDto;
 import com.gleb.zemskoi.adverts.entity.enums.CustomerStatusEnum;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -16,6 +17,7 @@ import java.util.UUID;
 public class CustomerService {
     private final CustomerRepository customerRepository;
     private final CustomerConverter customerConverter;
+    private final PasswordEncoder bcryptEncoder;
 
     public CustomerDto findCustomerByUuid(UUID uuid) {
         Customer customer = customerRepository.findCustomerByUuid(uuid);
@@ -31,6 +33,8 @@ public class CustomerService {
 
     public CustomerDto saveCustomer(CustomerDto customerDto) {
         Customer customer = customerConverter.toCustomer(customerDto);
+        customer.setUsername(customer.getUsername());
+        customer.setPassword(bcryptEncoder.encode(customer.getPassword()));
         customer.setCreateDate(LocalDateTime.now());
         customer.setUpdateDate(customer.getCreateDate());
         customer.setUuid(UUID.randomUUID());

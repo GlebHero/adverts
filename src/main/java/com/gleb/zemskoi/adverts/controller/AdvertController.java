@@ -40,8 +40,8 @@ public class AdvertController {
 
     @LogJournal
     @DeleteMapping(value = "advertUuid/{advertUuid}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void disableAdvertByUuid(@PathVariable(name = "advertUuid") UUID advertUuid) {
-        advertService.disableAdvertByUuid(advertUuid);
+    public void closeAdvertByUuid(@PathVariable(name = "advertUuid") UUID advertUuid) {
+        advertService.closeAdvertByUuid(advertUuid);
     }
 
     @LogJournal

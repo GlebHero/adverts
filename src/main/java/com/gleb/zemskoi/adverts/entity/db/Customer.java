@@ -28,6 +28,11 @@ public class Customer implements Serializable {
     @NotBlank
     private String name;
     @NotBlank
+    @Column(unique = true)
+    private String username;
+    @NotBlank
+    private String password;
+    @NotBlank
     private String lastName;
     @NotBlank
     private String email;

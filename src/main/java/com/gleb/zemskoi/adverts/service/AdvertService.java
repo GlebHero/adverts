@@ -4,7 +4,6 @@ import com.gleb.zemskoi.adverts.converter.AdvertConverter;
 import com.gleb.zemskoi.adverts.converter.CustomerConverter;
 import com.gleb.zemskoi.adverts.dao.AdvertRepository;
 import com.gleb.zemskoi.adverts.dao.CustomerRepository;
-import com.gleb.zemskoi.adverts.entity.common.RestResponseEntity;
 import com.gleb.zemskoi.adverts.entity.db.Advert;
 import com.gleb.zemskoi.adverts.entity.db.Customer;
 import com.gleb.zemskoi.adverts.entity.dto.AdvertDto;
@@ -55,7 +54,7 @@ public class AdvertService {
         return advertConverter.toAdvertDto(advert);
     }
 
-    public void disableAdvertByUuid(UUID uuid) {
+    public void closeAdvertByUuid(UUID uuid) {
         Advert advertByUuid = advertRepository.findAdvertByUuid(uuid);
         advertByUuid.setAdvertStatusEnum(AdvertStatusEnum.CLOSED);
         advertByUuid.setUpdateDate(LocalDateTime.now());
