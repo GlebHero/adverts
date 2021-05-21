@@ -37,7 +37,7 @@ public class CustomerController {
 
     @LogJournal
     @PutMapping(value = "update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public RestResponseEntity<CustomerDto> updateAdvertByUuid(@Valid @RequestBody CustomerDto customerDto) {
+    public RestResponseEntity<CustomerDto> updateCustomerByUuid(@Valid @RequestBody CustomerDto customerDto) {
         return new RestResponseEntity<>(customerService.updateCustomerByUuid(customerDto));
     }
 }

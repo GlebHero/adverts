@@ -1,10 +1,13 @@
 package com.gleb.zemskoi.adverts.controller;
 
 import com.gleb.zemskoi.adverts.aop.logging.LogJournal;
+import com.gleb.zemskoi.adverts.entity.common.Data;
+import com.gleb.zemskoi.adverts.entity.common.PageRequest;
 import com.gleb.zemskoi.adverts.entity.common.RestResponseEntity;
 import com.gleb.zemskoi.adverts.entity.dto.AdvertDto;
 import com.gleb.zemskoi.adverts.entity.filter.AdvertFilter;
 import com.gleb.zemskoi.adverts.service.AdvertService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +22,7 @@ import java.util.UUID;
 public class AdvertController {
     private final AdvertService advertService;
 
+    @Operation(summary = "Find advert by advert UUID")
     @LogJournal
     @GetMapping(value = "advertUuid/{advertUuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public RestResponseEntity<AdvertDto> findAdvertByUuid(@PathVariable(name = "advertUuid") UUID advertUuid) {
@@ -54,5 +58,12 @@ public class AdvertController {
     @PostMapping(value = "filter", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public RestResponseEntity<List<AdvertDto>> filterAdverts(@RequestBody List<AdvertFilter> advertFilters) {
         return new RestResponseEntity<>(advertService.filterAdverts(advertFilters));
+    }
+
+    @LogJournal
+    @PostMapping(value = "all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public RestResponseEntity<List<AdvertDto>> findAllAdverts(@Valid @RequestBody PageRequest pageRequest) {
+        Data<List<AdvertDto>> allAdverts = advertService.findAllAdverts(pageRequest);
+        return new RestResponseEntity<>(allAdverts);
     }
 }
