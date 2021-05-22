@@ -1,6 +1,7 @@
 package com.gleb.zemskoi.adverts.mq;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gleb.zemskoi.adverts.aop.logging.LogJournal;
 import com.gleb.zemskoi.adverts.entity.db.Advert;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -21,6 +22,7 @@ public class Producer {
 
     @SneakyThrows
     @Async
+    @LogJournal
     public void sendAdvertForReview(Advert advert) {
         String jsonAdvert = objectMapper.writeValueAsString(advert);
         jmsTemplate.convertAndSend(queueName, jsonAdvert);

@@ -4,13 +4,15 @@ import com.gleb.zemskoi.adverts.converter.AdvertConverter;
 import com.gleb.zemskoi.adverts.converter.CustomerConverter;
 import com.gleb.zemskoi.adverts.dao.AdvertRepository;
 import com.gleb.zemskoi.adverts.dao.CustomerRepository;
-import com.gleb.zemskoi.adverts.entity.common.RestResponseEntity;
+import com.gleb.zemskoi.adverts.entity.common.Data;
+import com.gleb.zemskoi.adverts.entity.common.PageRequest;
+import com.gleb.zemskoi.adverts.entity.common.Pagination;
 import com.gleb.zemskoi.adverts.entity.db.Advert;
 import com.gleb.zemskoi.adverts.entity.db.Customer;
 import com.gleb.zemskoi.adverts.entity.dto.AdvertDto;
 import com.gleb.zemskoi.adverts.entity.enums.AdvertStatusEnum;
+import com.gleb.zemskoi.adverts.entity.filter.AdvertFilter;
 import com.gleb.zemskoi.adverts.mq.Producer;
-import lombok.Data;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -18,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@Data
+@lombok.Data
 @Service
 public class AdvertService {
     private final AdvertRepository advertRepository;
@@ -26,7 +28,7 @@ public class AdvertService {
     private final AdvertConverter advertConverter;
     private final CustomerConverter customerConverter;
     private final Producer producer;
-    private final AdvertFilter advertFilter;
+    private final AdvertStopWordService advertStopWordService;
 
     public AdvertDto findAdvertByUuid(UUID uuid) {
         Advert advert = advertRepository.findAdvertByUuid(uuid);
@@ -54,25 +56,25 @@ public class AdvertService {
         return advertConverter.toAdvertDto(advert);
     }
 
-    public void disableAdvertByUuid(UUID uuid) {
+    public void closeAdvertByUuid(UUID uuid) {
         Advert advertByUuid = advertRepository.findAdvertByUuid(uuid);
         advertByUuid.setAdvertStatusEnum(AdvertStatusEnum.CLOSED);
         advertByUuid.setUpdateDate(LocalDateTime.now());
         advertRepository.save(advertByUuid);
     }
 
-    public RestResponseEntity<AdvertDto> updateAdvertByUuid(AdvertDto advertDto) {
-        //todo check jwt. Создатель ли объявы пытается ее апдейтить.
+    public AdvertDto updateAdvertByUuid(AdvertDto advertDto) {
+        //todo check jwt. Check who exactly wants to update advert.
         Advert advertByUuid = advertRepository.findAdvertByUuid(advertDto.getUuid());
         advertByUuid.setUpdateDate(LocalDateTime.now());
         advertByUuid = advertConverter.toAdvertClone(advertDto, advertByUuid);
         advertRepository.save(advertByUuid);
-        return new RestResponseEntity<>(advertConverter.toAdvertDto(advertByUuid));
+        return advertConverter.toAdvertDto(advertByUuid);
     }
 
 
     public void changeAdvertStatus(Advert advert) {
-        if (advertFilter.containsBadWord(advert)) {
+        if (advertStopWordService.containsBadWord(advert)) {
             advert.setAdvertStatusEnum(AdvertStatusEnum.CLOSED);
         } else {
             advert.setAdvertStatusEnum(AdvertStatusEnum.OPEN);
@@ -91,4 +93,33 @@ public class AdvertService {
         return advert;
     }
 
+    public List<AdvertDto> filterAdverts(List<AdvertFilter> advertFilters) {
+        List<Advert> allAdverts = advertRepository.findAll();
+        List<AdvertDto> advertDtos = new ArrayList<>();
+        for (AdvertFilter advertFilter : advertFilters) {
+            allAdverts = advertFilter.filter(allAdverts);
+        }
+        allAdverts.forEach(advert -> advertDtos.add(advertConverter.toAdvertDto(advert)));
+        return advertDtos;
+    }
+
+    public Data<List<AdvertDto>> findAllAdverts(PageRequest pageRequest) {
+        List<Advert> allAdverts = advertRepository.findAll();
+        List<AdvertDto> paginatedResult = new ArrayList<>();
+        allAdverts.stream()
+                .skip((pageRequest.getPage() - 1) * pageRequest.getSize())
+                .limit(pageRequest.getSize())
+                .forEach(advert -> paginatedResult.add(advertConverter.toAdvertDto(advert)));
+        long total = allAdverts.size();
+        long currentPageTotal = paginatedResult.size();
+
+        Pagination pagination = new Pagination(pageRequest.getPage(), currentPageTotal, calculatePageCount(total, pageRequest.getSize()), total);
+        return new Data<>(paginatedResult, pagination);
+    }
+
+    private Long calculatePageCount(Long totalSize, Long pageRequestSize) {
+        Double result = totalSize.doubleValue() / pageRequestSize.doubleValue();
+        Double roundedResult = Math.ceil(result);
+        return roundedResult.longValue();
+    }
 }

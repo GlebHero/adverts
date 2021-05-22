@@ -1,5 +1,6 @@
 package com.gleb.zemskoi.adverts.controller;
 
+import com.gleb.zemskoi.adverts.aop.logging.LogJournal;
 import com.gleb.zemskoi.adverts.entity.common.RestResponseEntity;
 import com.gleb.zemskoi.adverts.entity.dto.CustomerDto;
 import com.gleb.zemskoi.adverts.service.CustomerService;
@@ -16,23 +17,27 @@ import java.util.UUID;
 public class CustomerController {
     private final CustomerService customerService;
 
+    @LogJournal
     @GetMapping(value = "customerUuid/{customerUuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public RestResponseEntity<CustomerDto> findCustomerByUuid(@PathVariable UUID customerUuid) {
         return new RestResponseEntity<>(customerService.findCustomerByUuid(customerUuid));
     }
 
+    @LogJournal
     @PostMapping(value = "save", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public RestResponseEntity<CustomerDto> saveCustomer(@Valid @RequestBody CustomerDto customerDto) {
         return new RestResponseEntity<>(customerService.saveCustomer(customerDto));
     }
 
+    @LogJournal
     @DeleteMapping(value = "customerUuid/{customerUuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void blockCustomerByUuid(@PathVariable UUID customerUuid) {
         customerService.blockCustomerByUuid(customerUuid);
     }
 
+    @LogJournal
     @PutMapping(value = "update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public RestResponseEntity<CustomerDto> updateAdvertByUuid(@Valid @RequestBody CustomerDto customerDto) {
-        return customerService.updateCustomerByUuid(customerDto);
+    public RestResponseEntity<CustomerDto> updateCustomerByUuid(@Valid @RequestBody CustomerDto customerDto) {
+        return new RestResponseEntity<>(customerService.updateCustomerByUuid(customerDto));
     }
 }

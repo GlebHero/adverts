@@ -23,4 +23,7 @@ public class RestResponseEntity<T> {
         this.data = new Data<>(t);
     }
 
+    public RestResponseEntity(Data<T> data) {
+        this.data = data;
+    }
 }

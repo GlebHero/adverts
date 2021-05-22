@@ -2,11 +2,11 @@ package com.gleb.zemskoi.adverts.service;
 
 import com.gleb.zemskoi.adverts.converter.CustomerConverter;
 import com.gleb.zemskoi.adverts.dao.CustomerRepository;
-import com.gleb.zemskoi.adverts.entity.common.RestResponseEntity;
 import com.gleb.zemskoi.adverts.entity.db.Customer;
 import com.gleb.zemskoi.adverts.entity.dto.CustomerDto;
 import com.gleb.zemskoi.adverts.entity.enums.CustomerStatusEnum;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -17,6 +17,7 @@ import java.util.UUID;
 public class CustomerService {
     private final CustomerRepository customerRepository;
     private final CustomerConverter customerConverter;
+    private final PasswordEncoder bcryptEncoder;
 
     public CustomerDto findCustomerByUuid(UUID uuid) {
         Customer customer = customerRepository.findCustomerByUuid(uuid);
@@ -32,6 +33,8 @@ public class CustomerService {
 
     public CustomerDto saveCustomer(CustomerDto customerDto) {
         Customer customer = customerConverter.toCustomer(customerDto);
+        customer.setUsername(customer.getUsername());
+        customer.setPassword(bcryptEncoder.encode(customer.getPassword()));
         customer.setCreateDate(LocalDateTime.now());
         customer.setUpdateDate(customer.getCreateDate());
         customer.setUuid(UUID.randomUUID());
@@ -39,11 +42,11 @@ public class CustomerService {
         return customerConverter.toCustomerDto(customerRepository.save(customer));
     }
 
-    public RestResponseEntity<CustomerDto> updateCustomerByUuid(CustomerDto customerDto) {
+    public CustomerDto updateCustomerByUuid(CustomerDto customerDto) {
         Customer customerByUuid = customerRepository.findCustomerByUuid(customerDto.getUuid());
         customerByUuid.setUpdateDate(LocalDateTime.now());
         Customer customer = customerConverter.toCustomerClone(customerDto, customerByUuid);
         customerRepository.save(customer);
-        return new RestResponseEntity<>(customerConverter.toCustomerDto(customer));
+        return customerConverter.toCustomerDto(customer);
     }
 }
