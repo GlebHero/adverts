@@ -29,6 +29,7 @@ public class AdvertController {
         return new RestResponseEntity<>(advertService.findAdvertByUuid(advertUuid));
     }
 
+    @Operation(summary = "Find advert by customer UUID")
     @LogJournal
     @GetMapping(value = "customerUuid/{customerUuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public RestResponseEntity<List<AdvertDto>> findAdvertsByCustomerUuid(@PathVariable(name = "customerUuid") UUID customerUuid,
@@ -36,30 +37,35 @@ public class AdvertController {
         return new RestResponseEntity<>(advertService.findAdvertsByCustomerId(customerUuid, active));
     }
 
+    @Operation(summary = "Save advert")
     @LogJournal
     @PostMapping(value = "save", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public RestResponseEntity<AdvertDto> saveAdvert(@Valid @RequestBody AdvertDto advert) {
         return new RestResponseEntity<>(advertService.saveAdvert(advert));
     }
 
+    @Operation(summary = "Close advert by advert UUID")
     @LogJournal
     @DeleteMapping(value = "advertUuid/{advertUuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void closeAdvertByUuid(@PathVariable(name = "advertUuid") UUID advertUuid) {
         advertService.closeAdvertByUuid(advertUuid);
     }
 
+    @Operation(summary = "Update advert by advert UUID")
     @LogJournal
     @PutMapping(value = "update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public RestResponseEntity<AdvertDto> updateAdvertByUuid(@Valid @RequestBody AdvertDto advertDto) {
         return new RestResponseEntity<>(advertService.updateAdvertByUuid(advertDto));
     }
 
+    @Operation(summary = "Filter advert")
     @LogJournal
     @PostMapping(value = "filter", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public RestResponseEntity<List<AdvertDto>> filterAdverts(@RequestBody List<AdvertFilter> advertFilters) {
         return new RestResponseEntity<>(advertService.filterAdverts(advertFilters));
     }
 
+    @Operation(summary = "Find all advert with pagination")
     @LogJournal
     @PostMapping(value = "all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public RestResponseEntity<List<AdvertDto>> findAllAdverts(@Valid @RequestBody PageRequest pageRequest) {

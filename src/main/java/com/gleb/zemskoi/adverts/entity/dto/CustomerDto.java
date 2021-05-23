@@ -2,6 +2,7 @@ package com.gleb.zemskoi.adverts.entity.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.*;
@@ -9,6 +10,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 @Data
+@EqualsAndHashCode(exclude = "password")
 @NoArgsConstructor
 @AllArgsConstructor
 public class CustomerDto {

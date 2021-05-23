@@ -1,10 +1,12 @@
 package com.gleb.zemskoi.adverts.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gleb.zemskoi.adverts.AdvertsApplication;
+import com.gleb.zemskoi.adverts.common.AuthenticateTestHelper;
 import com.gleb.zemskoi.adverts.config.ContainersEnvironment;
+import com.gleb.zemskoi.adverts.entity.common.JwtRequest;
 import com.gleb.zemskoi.adverts.entity.common.RestResponseEntity;
+import com.gleb.zemskoi.adverts.entity.db.Customer;
 import com.gleb.zemskoi.adverts.entity.dto.CustomerDto;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -17,12 +19,11 @@ import org.springframework.http.*;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Objects;
 
+import static com.gleb.zemskoi.adverts.TestUtils.getClassPathResourceAsObject;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ActiveProfiles("test")
@@ -34,7 +35,7 @@ class CustomerControllerTest extends ContainersEnvironment {
     private TestRestTemplate restTemplate;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private AuthenticateTestHelper authenticateTestHelper;
 
     @Test
     public void findCustomerByUuid() {
@@ -42,29 +43,34 @@ class CustomerControllerTest extends ContainersEnvironment {
         CustomerDto expectedCustomerDto = new CustomerDto();
         expectedCustomerDto.setUuid(createdCustomerDto.getUuid());
         expectedCustomerDto.setName("Ivan");
-        expectedCustomerDto.setEmail("ivpet@mail.ru");
+        expectedCustomerDto.setEmail("ivpet@gmail.com");
         expectedCustomerDto.setLastName("Petrov");
-        expectedCustomerDto.setBirthDate(LocalDate.parse("2001-01-01"));
-        ResponseEntity<RestResponseEntity<CustomerDto>> exchange = restTemplate.exchange("/customer/customerUuid/"+createdCustomerDto.getUuid().toString(), HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), new ParameterizedTypeReference<>() {});
+        expectedCustomerDto.setUsername("qwe123");
+        expectedCustomerDto.setPhoneNumber("8189756420");
+        expectedCustomerDto.setBirthDate(LocalDate.parse("2000-01-01"));
+        ResponseEntity<RestResponseEntity<CustomerDto>> exchange = getExchange(createdCustomerDto);
         assertEquals(expectedCustomerDto, Objects.requireNonNull(exchange.getBody()).getData().getResult());
+    }
+
+    private ResponseEntity<RestResponseEntity<CustomerDto>> getExchange(CustomerDto createdCustomerDto) {
+        HttpHeaders authenticate = authenticateTestHelper.authenticate(new JwtRequest(createdCustomerDto.getUsername(), "s123"));
+        return restTemplate.exchange("/customer/customerUuid/" + createdCustomerDto.getUuid().toString(), HttpMethod.GET, new HttpEntity<>(authenticate), new ParameterizedTypeReference<>() {
+        });
     }
 
     @SneakyThrows
     private CustomerDto createCustomer(String fileName) {
-        //todo configure testresttemplate for jackson
-//        Customer customer = getClassPathResourceAsObject("/dto/customer/" + fileName, new TypeReference<>() {});
-        String customer = Files.readString(Path.of("src/test/resources/dto/customer/" + fileName));
+        Customer customer = getClassPathResourceAsObject("/dto/customer/" + fileName, new TypeReference<>() {});
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        ResponseEntity<String> result = restTemplate.exchange(
+        ResponseEntity<RestResponseEntity<CustomerDto>> result = restTemplate.exchange(
                 "/customer/save",
                 HttpMethod.POST,
                 new HttpEntity<>(customer, HttpHeaders.writableHttpHeaders(headers)),
                 new ParameterizedTypeReference<>() {
                 }
         );
-        RestResponseEntity<CustomerDto> restResponseEntity = objectMapper.readValue(result.getBody(), new TypeReference<>() {});
-        return restResponseEntity.getData().getResult();
+        return result.getBody().getData().getResult();
     }
 }
