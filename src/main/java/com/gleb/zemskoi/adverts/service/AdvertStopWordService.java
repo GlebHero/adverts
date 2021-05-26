@@ -15,6 +15,11 @@ public class AdvertStopWordService {
     @Value("#{'${list.of.stop.words}'.split(',')}")
     private List<String> stopDictionaryWord;
 
+    /**
+     * Check if new advert contains bad words from stop list.
+     * @param advert
+     * @return true if contains bad words.
+     */
     @LogJournal
     public Boolean containsBadWord(Advert advert) {
         Optional<String> titleStopWord = findStopWord(advert.getTitle());

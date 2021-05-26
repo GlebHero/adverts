@@ -1,33 +1,33 @@
-package com.gleb.zemskoi.adverts.controller;
+package com.gleb.zemskoi.adverts.integration.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.gleb.zemskoi.adverts.AdvertsApplication;
-import com.gleb.zemskoi.adverts.common.AuthenticateTestHelper;
 import com.gleb.zemskoi.adverts.config.ContainersEnvironment;
 import com.gleb.zemskoi.adverts.entity.common.JwtRequest;
 import com.gleb.zemskoi.adverts.entity.common.RestResponseEntity;
 import com.gleb.zemskoi.adverts.entity.db.Customer;
 import com.gleb.zemskoi.adverts.entity.dto.CustomerDto;
+import com.gleb.zemskoi.adverts.integration.common.AuthenticateTestHelper;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Objects;
 
-import static com.gleb.zemskoi.adverts.TestUtils.getClassPathResourceAsObject;
+import static com.gleb.zemskoi.adverts.integration.common.TestUtils.getClassPathResourceAsObject;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ActiveProfiles("test")
-@ExtendWith(SpringExtension.class)
+@RunWith(SpringRunner.class)
 @SpringBootTest(classes = AdvertsApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CustomerControllerTest extends ContainersEnvironment {
 

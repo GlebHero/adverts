@@ -73,6 +73,10 @@ public class AdvertService {
     }
 
 
+    /**
+     * Change default status REVIEW to another.
+     * @param advert
+     */
     public void changeAdvertStatus(Advert advert) {
         if (advertStopWordService.containsBadWord(advert)) {
             advert.setAdvertStatusEnum(AdvertStatusEnum.CLOSED);
@@ -82,6 +86,11 @@ public class AdvertService {
         advertRepository.save(advert);
     }
 
+    /**
+     * Set default values for new advert
+     * @param advertDto
+     * @return
+     */
     private Advert setValuesForNewAdvert(AdvertDto advertDto) {
         Advert advert = advertConverter.toAdvert(advertDto);
         advert.setUuid(UUID.randomUUID());
@@ -93,6 +102,11 @@ public class AdvertService {
         return advert;
     }
 
+    /**
+     * Use income advertFilters to filter advert.
+     * @param advertFilters
+     * @return
+     */
     public List<AdvertDto> filterAdverts(List<AdvertFilter> advertFilters) {
         List<Advert> allAdverts = advertRepository.findAll();
         List<AdvertDto> advertDtos = new ArrayList<>();
@@ -117,6 +131,12 @@ public class AdvertService {
         return new Data<>(paginatedResult, pagination);
     }
 
+    /**
+     * Calculate page count uses totalSize and pageRequestSize from request. Result rounds up.
+     * @param totalSize
+     * @param pageRequestSize
+     * @return
+     */
     private Long calculatePageCount(Long totalSize, Long pageRequestSize) {
         Double result = totalSize.doubleValue() / pageRequestSize.doubleValue();
         Double roundedResult = Math.ceil(result);
