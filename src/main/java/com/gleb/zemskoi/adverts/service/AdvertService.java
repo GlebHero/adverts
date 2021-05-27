@@ -1,7 +1,6 @@
 package com.gleb.zemskoi.adverts.service;
 
 import com.gleb.zemskoi.adverts.converter.AdvertConverter;
-import com.gleb.zemskoi.adverts.converter.CustomerConverter;
 import com.gleb.zemskoi.adverts.dao.AdvertRepository;
 import com.gleb.zemskoi.adverts.dao.CustomerRepository;
 import com.gleb.zemskoi.adverts.entity.common.Data;
@@ -13,6 +12,7 @@ import com.gleb.zemskoi.adverts.entity.dto.AdvertDto;
 import com.gleb.zemskoi.adverts.entity.enums.AdvertStatusEnum;
 import com.gleb.zemskoi.adverts.entity.filter.AdvertFilter;
 import com.gleb.zemskoi.adverts.mq.Producer;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -20,13 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@lombok.Data
 @Service
+@RequiredArgsConstructor
 public class AdvertService {
     private final AdvertRepository advertRepository;
     private final CustomerRepository customerRepository;
     private final AdvertConverter advertConverter;
-    private final CustomerConverter customerConverter;
     private final Producer producer;
     private final AdvertStopWordService advertStopWordService;
 
@@ -73,6 +72,10 @@ public class AdvertService {
     }
 
 
+    /**
+     * Change default status REVIEW to another.
+     * @param advert
+     */
     public void changeAdvertStatus(Advert advert) {
         if (advertStopWordService.containsBadWord(advert)) {
             advert.setAdvertStatusEnum(AdvertStatusEnum.CLOSED);
@@ -82,6 +85,11 @@ public class AdvertService {
         advertRepository.save(advert);
     }
 
+    /**
+     * Set default values for new advert
+     * @param advertDto
+     * @return
+     */
     private Advert setValuesForNewAdvert(AdvertDto advertDto) {
         Advert advert = advertConverter.toAdvert(advertDto);
         advert.setUuid(UUID.randomUUID());
@@ -93,6 +101,11 @@ public class AdvertService {
         return advert;
     }
 
+    /**
+     * Use income advertFilters to filter advert.
+     * @param advertFilters
+     * @return
+     */
     public List<AdvertDto> filterAdverts(List<AdvertFilter> advertFilters) {
         List<Advert> allAdverts = advertRepository.findAll();
         List<AdvertDto> advertDtos = new ArrayList<>();
@@ -117,6 +130,12 @@ public class AdvertService {
         return new Data<>(paginatedResult, pagination);
     }
 
+    /**
+     * Calculate page count uses totalSize and pageRequestSize from request. Result rounds up.
+     * @param totalSize
+     * @param pageRequestSize
+     * @return
+     */
     private Long calculatePageCount(Long totalSize, Long pageRequestSize) {
         Double result = totalSize.doubleValue() / pageRequestSize.doubleValue();
         Double roundedResult = Math.ceil(result);
