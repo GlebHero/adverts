@@ -2,12 +2,12 @@ package com.gleb.zemskoi.adverts.integration.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.gleb.zemskoi.adverts.AdvertsApplication;
-import com.gleb.zemskoi.adverts.config.ContainersEnvironment;
 import com.gleb.zemskoi.adverts.entity.common.JwtRequest;
 import com.gleb.zemskoi.adverts.entity.common.RestResponseEntity;
 import com.gleb.zemskoi.adverts.entity.db.Customer;
 import com.gleb.zemskoi.adverts.entity.dto.CustomerDto;
 import com.gleb.zemskoi.adverts.integration.common.AuthenticateTestHelper;
+import com.gleb.zemskoi.adverts.integration.config.ContainersEnvironment;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -48,11 +48,11 @@ class CustomerControllerTest extends ContainersEnvironment {
         expectedCustomerDto.setUsername("qwe123");
         expectedCustomerDto.setPhoneNumber("8189756420");
         expectedCustomerDto.setBirthDate(LocalDate.parse("2000-01-01"));
-        ResponseEntity<RestResponseEntity<CustomerDto>> exchange = getExchange(createdCustomerDto);
+        ResponseEntity<RestResponseEntity<CustomerDto>> exchange = getCreatedCustomerDtoByRest(createdCustomerDto);
         assertEquals(expectedCustomerDto, Objects.requireNonNull(exchange.getBody()).getData().getResult());
     }
 
-    private ResponseEntity<RestResponseEntity<CustomerDto>> getExchange(CustomerDto createdCustomerDto) {
+    private ResponseEntity<RestResponseEntity<CustomerDto>> getCreatedCustomerDtoByRest(CustomerDto createdCustomerDto) {
         HttpHeaders authenticate = authenticateTestHelper.authenticate(new JwtRequest(createdCustomerDto.getUsername(), "s123"));
         return restTemplate.exchange("/customer/customerUuid/" + createdCustomerDto.getUuid().toString(), HttpMethod.GET, new HttpEntity<>(authenticate), new ParameterizedTypeReference<>() {
         });

@@ -1,7 +1,6 @@
 package com.gleb.zemskoi.adverts.service;
 
 import com.gleb.zemskoi.adverts.converter.AdvertConverter;
-import com.gleb.zemskoi.adverts.converter.CustomerConverter;
 import com.gleb.zemskoi.adverts.dao.AdvertRepository;
 import com.gleb.zemskoi.adverts.dao.CustomerRepository;
 import com.gleb.zemskoi.adverts.entity.common.Data;
@@ -13,6 +12,7 @@ import com.gleb.zemskoi.adverts.entity.dto.AdvertDto;
 import com.gleb.zemskoi.adverts.entity.enums.AdvertStatusEnum;
 import com.gleb.zemskoi.adverts.entity.filter.AdvertFilter;
 import com.gleb.zemskoi.adverts.mq.Producer;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -20,13 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@lombok.Data
 @Service
+@RequiredArgsConstructor
 public class AdvertService {
     private final AdvertRepository advertRepository;
     private final CustomerRepository customerRepository;
     private final AdvertConverter advertConverter;
-    private final CustomerConverter customerConverter;
     private final Producer producer;
     private final AdvertStopWordService advertStopWordService;
 

@@ -1,6 +1,5 @@
-package com.gleb.zemskoi.adverts.unit.service;
+package unit.service;
 
-import com.gleb.zemskoi.adverts.AdvertsApplication;
 import com.gleb.zemskoi.adverts.dao.AdvertRepository;
 import com.gleb.zemskoi.adverts.entity.common.Data;
 import com.gleb.zemskoi.adverts.entity.common.PageRequest;
@@ -9,16 +8,16 @@ import com.gleb.zemskoi.adverts.entity.db.Advert;
 import com.gleb.zemskoi.adverts.entity.db.Customer;
 import com.gleb.zemskoi.adverts.entity.dto.AdvertDto;
 import com.gleb.zemskoi.adverts.entity.enums.AdvertStatusEnum;
-import com.gleb.zemskoi.adverts.config.ContainersEnvironment;
 import com.gleb.zemskoi.adverts.service.AdvertService;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
+import unit.service.config.BeanConfigUnit;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -29,8 +28,8 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = AdvertsApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class AdvertServiceTest extends ContainersEnvironment {
+@SpringBootTest(classes = BeanConfigUnit.class)
+public class AdvertServiceTest {
 
     @MockBean
     private AdvertRepository advertRepository;
@@ -38,7 +37,7 @@ public class AdvertServiceTest extends ContainersEnvironment {
     @Autowired
     private AdvertService advertService;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         List<Advert> adverts = Arrays.asList(new Advert(1L, UUID.randomUUID(), "Test title", "Test description",
                         BigDecimal.ONE, LocalDateTime.now(), LocalDateTime.now(), AdvertStatusEnum.OPEN, new Customer()),
