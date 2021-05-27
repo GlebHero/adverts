@@ -1,6 +1,5 @@
 package unit.service;
 
-import com.gleb.zemskoi.adverts.converter.AdvertConverter;
 import com.gleb.zemskoi.adverts.dao.AdvertRepository;
 import com.gleb.zemskoi.adverts.entity.common.Data;
 import com.gleb.zemskoi.adverts.entity.common.PageRequest;
@@ -12,7 +11,11 @@ import com.gleb.zemskoi.adverts.entity.enums.AdvertStatusEnum;
 import com.gleb.zemskoi.adverts.service.AdvertService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
+import org.mockito.Mockito;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import unit.service.config.BeanConfigUnit;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -22,20 +25,17 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class AdvertServiceTest {
+@SpringBootTest(classes = BeanConfigUnit.class)
+public class AdvertService2Test {
 
-    @Mock
+    @MockBean
     private AdvertRepository advertRepository;
 
-    @Spy
-    private AdvertConverter advertConverter;
-
-    @InjectMocks
+    @SpyBean
     private AdvertService advertService;
 
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.openMocks(this);
         List<Advert> adverts = new ArrayList<>();
         for(int i = 0; i < 10; i++) {
             adverts.add(new Advert(Long.valueOf(i), UUID.randomUUID(), "Test title" + i, "Test description" + i,
