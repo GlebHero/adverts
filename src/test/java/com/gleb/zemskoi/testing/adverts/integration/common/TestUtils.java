@@ -1,4 +1,4 @@
-package com.gleb.zemskoi.adverts.integration.common;
+package com.gleb.zemskoi.testing.adverts.integration.common;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;

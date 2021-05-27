@@ -1,4 +1,4 @@
-package com.gleb.zemskoi.adverts.integration.container;
+package com.gleb.zemskoi.testing.adverts.integration.container;
 
 
 import org.testcontainers.containers.PostgreSQLContainer;

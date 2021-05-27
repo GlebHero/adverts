@@ -1,4 +1,4 @@
-package unit.service;
+package com.gleb.zemskoi.testing.adverts.unit.service;
 
 import com.gleb.zemskoi.adverts.dao.AdvertRepository;
 import com.gleb.zemskoi.adverts.entity.common.Data;
@@ -9,13 +9,13 @@ import com.gleb.zemskoi.adverts.entity.db.Customer;
 import com.gleb.zemskoi.adverts.entity.dto.AdvertDto;
 import com.gleb.zemskoi.adverts.entity.enums.AdvertStatusEnum;
 import com.gleb.zemskoi.adverts.service.AdvertService;
+import com.gleb.zemskoi.testing.adverts.unit.service.config.BeanConfigUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import unit.service.config.BeanConfigUnit;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

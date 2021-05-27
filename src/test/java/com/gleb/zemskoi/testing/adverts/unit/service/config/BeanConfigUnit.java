@@ -1,4 +1,4 @@
-package unit.service.config;
+package com.gleb.zemskoi.testing.adverts.unit.service.config;
 
 import com.gleb.zemskoi.adverts.converter.AdvertConverter;
 import com.gleb.zemskoi.adverts.dao.AdvertRepository;
