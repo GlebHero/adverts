@@ -1,7 +1,9 @@
 package com.gleb.zemskoi.adverts.config;
 
+import com.gleb.zemskoi.adverts.entity.common.CustomerInfo;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.context.annotation.RequestScope;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
@@ -21,5 +23,11 @@ public class BeanConfiguration {
     @Bean
     public Clock clock() {
         return Clock.systemDefaultZone();
+    }
+
+    @Bean
+    @RequestScope
+    public CustomerInfo customerInfo() {
+        return new CustomerInfo();
     }
 }

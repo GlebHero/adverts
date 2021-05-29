@@ -13,8 +13,6 @@ import java.util.UUID;
 @AllArgsConstructor
 public class AdvertDto {
     private UUID uuid;
-    @NotNull
-    private UUID customerUuid;
     @NotEmpty
     @Size(max = 100)
     private String title;

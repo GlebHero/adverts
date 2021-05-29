@@ -12,7 +12,9 @@ import java.util.UUID;
 public interface AdvertRepository extends CrudRepository<Advert, Long> {
 
     List<Advert> findAdvertByCustomerUuid(UUID uuid);
+
     @NotNullResult
     Advert findAdvertByUuid(UUID uuid);
+
     List<Advert> findAll();
 }

@@ -3,6 +3,7 @@ package com.gleb.zemskoi.adverts.service;
 import com.gleb.zemskoi.adverts.converter.AdvertConverter;
 import com.gleb.zemskoi.adverts.dao.AdvertRepository;
 import com.gleb.zemskoi.adverts.dao.CustomerRepository;
+import com.gleb.zemskoi.adverts.entity.common.CustomerInfo;
 import com.gleb.zemskoi.adverts.entity.common.Data;
 import com.gleb.zemskoi.adverts.entity.common.PageRequest;
 import com.gleb.zemskoi.adverts.entity.common.Pagination;
@@ -12,6 +13,7 @@ import com.gleb.zemskoi.adverts.entity.dto.AdvertDto;
 import com.gleb.zemskoi.adverts.entity.enums.AdvertStatusEnum;
 import com.gleb.zemskoi.adverts.entity.filter.AdvertFilter;
 import com.gleb.zemskoi.adverts.mq.Producer;
+import com.gleb.zemskoi.adverts.service.security.JwtUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +30,8 @@ public class AdvertService {
     private final AdvertConverter advertConverter;
     private final Producer producer;
     private final AdvertStopWordService advertStopWordService;
+    private final CustomerInfo customerInfo;
+    private final JwtUserDetailsService jwtUserDetailsService;
 
     public AdvertDto findAdvertByUuid(UUID uuid) {
         Advert advert = advertRepository.findAdvertByUuid(uuid);
@@ -63,8 +67,8 @@ public class AdvertService {
     }
 
     public AdvertDto updateAdvertByUuid(AdvertDto advertDto) {
-        //todo check jwt. Check who exactly wants to update advert.
         Advert advertByUuid = advertRepository.findAdvertByUuid(advertDto.getUuid());
+        jwtUserDetailsService.checkAvailabilityOperation(advertByUuid.getCustomer().getUuid());
         advertByUuid.setUpdateDate(LocalDateTime.now());
         advertByUuid = advertConverter.toAdvertClone(advertDto, advertByUuid);
         advertRepository.save(advertByUuid);
@@ -96,7 +100,7 @@ public class AdvertService {
         advert.setCreateDate(LocalDateTime.now());
         advert.setUpdateDate(advert.getCreateDate());
         advert.setAdvertStatusEnum(AdvertStatusEnum.REVIEW);
-        Customer customer = customerRepository.findCustomerByUuid(advertDto.getCustomerUuid());
+        Customer customer = customerRepository.findCustomerByUuid(customerInfo.getCustomerUuid());
         advert.setCustomer(customer);
         return advert;
     }
