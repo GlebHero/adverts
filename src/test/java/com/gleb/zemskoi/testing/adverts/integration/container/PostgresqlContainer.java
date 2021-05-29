@@ -22,8 +22,8 @@ public class PostgresqlContainer extends PostgreSQLContainer<PostgresqlContainer
     @Override
     public void start() {
         super.start();
-        System.setProperty("DB_URL", container.getJdbcUrl());
-        System.setProperty("DB_USERNAME", container.getUsername());
-        System.setProperty("DB_PASSWORD", container.getPassword());
+        System.setProperty("POSTGRES_DB_URL", container.getJdbcUrl());
+        System.setProperty("POSTGRES_DB_USERNAME", container.getUsername());
+        System.setProperty("POSTGRES_DB_PASSWORD", container.getPassword());
     }
 }

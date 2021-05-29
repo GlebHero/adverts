@@ -1,0 +1,27 @@
+version: "3"
+services:
+  app:
+    build: ./
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: test
+      spring_activemq_broker-url: tcp://activemq:61616
+      spring_datasource_url: jdbc:postgresql://postgres:5432/adverts
+      spring_datasource_username: postgres
+      spring_datasource_password: postgres
+    depends_on:
+      - activemq
+      - postgres
+  activemq:
+    image: rmohr/activemq
+    ports:
+      - "61616:61616"
+      - "8161:8161"
+  postgres:
+    image: postgres:12.5
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=adverts
