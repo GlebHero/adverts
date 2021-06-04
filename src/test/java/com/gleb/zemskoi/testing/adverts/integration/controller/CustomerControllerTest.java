@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.gleb.zemskoi.adverts.AdvertsApplication;
 import com.gleb.zemskoi.adverts.entity.common.JwtRequest;
 import com.gleb.zemskoi.adverts.entity.common.RestResponseEntity;
-import com.gleb.zemskoi.adverts.entity.db.Customer;
 import com.gleb.zemskoi.adverts.entity.dto.CustomerDto;
 import com.gleb.zemskoi.testing.adverts.integration.common.AuthenticateTestHelper;
 import com.gleb.zemskoi.testing.adverts.integration.config.ContainersEnvironment;
@@ -60,14 +59,14 @@ class CustomerControllerTest extends ContainersEnvironment {
 
     @SneakyThrows
     private CustomerDto createCustomer(String fileName) {
-        Customer customer = getClassPathResourceAsObject("/dto/customer/" + fileName, new TypeReference<>() {});
+        CustomerDto customerDto = getClassPathResourceAsObject("/dto/customer/" + fileName, new TypeReference<>() {});
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         ResponseEntity<RestResponseEntity<CustomerDto>> result = restTemplate.exchange(
                 "/customer/save",
                 HttpMethod.POST,
-                new HttpEntity<>(customer, HttpHeaders.writableHttpHeaders(headers)),
+                new HttpEntity<>(customerDto, HttpHeaders.writableHttpHeaders(headers)),
                 new ParameterizedTypeReference<>() {
                 }
         );
