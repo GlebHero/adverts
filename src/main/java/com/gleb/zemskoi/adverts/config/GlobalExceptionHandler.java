@@ -2,6 +2,7 @@ package com.gleb.zemskoi.adverts.config;
 
 import com.gleb.zemskoi.adverts.entity.common.Error;
 import com.gleb.zemskoi.adverts.entity.common.RestResponseEntity;
+import com.gleb.zemskoi.adverts.exception.ForbiddenException;
 import com.gleb.zemskoi.adverts.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -40,6 +41,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleNotFoundException(NotFoundException ex) {
         RestResponseEntity<Object> restResponseEntity = new RestResponseEntity<>(Collections.singletonList(new Error(ex.getClass().getSimpleName(), ex.getMessage())));
         return new ResponseEntity<>(restResponseEntity, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<Object> handleForbiddenException(ForbiddenException ex) {
+        RestResponseEntity<Object> restResponseEntity = new RestResponseEntity<>(Collections.singletonList(new Error(ex.getClass().getSimpleName(), ex.getMessage())));
+        return new ResponseEntity<>(restResponseEntity, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)

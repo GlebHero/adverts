@@ -23,7 +23,6 @@ public class JwtUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
         Customer customer = customerRepository.findCustomerByUsername(username);
         return new User(customer.getUsername(), customer.getPassword(),
                 new ArrayList<>());
@@ -35,7 +34,7 @@ public class JwtUserDetailsService implements UserDetailsService {
     }
 
     public void checkAvailabilityOperation(UUID uuid) {
-        if (uuid.equals(customerInfo.getCustomerUuid())){
+        if (!uuid.equals(customerInfo.getCustomerUuid())) {
             throw new ForbiddenException();
         }
     }
