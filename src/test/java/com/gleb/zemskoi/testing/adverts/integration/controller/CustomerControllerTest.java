@@ -1,13 +1,12 @@
-package com.gleb.zemskoi.adverts.integration.controller;
+package com.gleb.zemskoi.testing.adverts.integration.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.gleb.zemskoi.adverts.AdvertsApplication;
 import com.gleb.zemskoi.adverts.entity.common.JwtRequest;
 import com.gleb.zemskoi.adverts.entity.common.RestResponseEntity;
-import com.gleb.zemskoi.adverts.entity.db.Customer;
 import com.gleb.zemskoi.adverts.entity.dto.CustomerDto;
-import com.gleb.zemskoi.adverts.integration.common.AuthenticateTestHelper;
-import com.gleb.zemskoi.adverts.integration.config.ContainersEnvironment;
+import com.gleb.zemskoi.testing.adverts.integration.common.AuthenticateTestHelper;
+import com.gleb.zemskoi.testing.adverts.integration.config.ContainersEnvironment;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -23,12 +22,12 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Objects;
 
-import static com.gleb.zemskoi.adverts.integration.common.TestUtils.getClassPathResourceAsObject;
+import static com.gleb.zemskoi.testing.adverts.integration.common.TestUtils.getClassPathResourceAsObject;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = AdvertsApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = {AdvertsApplication.class, AuthenticateTestHelper.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CustomerControllerTest extends ContainersEnvironment {
 
     @Autowired
@@ -60,14 +59,14 @@ class CustomerControllerTest extends ContainersEnvironment {
 
     @SneakyThrows
     private CustomerDto createCustomer(String fileName) {
-        Customer customer = getClassPathResourceAsObject("/dto/customer/" + fileName, new TypeReference<>() {});
+        CustomerDto customerDto = getClassPathResourceAsObject("/dto/customer/" + fileName, new TypeReference<>() {});
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         ResponseEntity<RestResponseEntity<CustomerDto>> result = restTemplate.exchange(
                 "/customer/save",
                 HttpMethod.POST,
-                new HttpEntity<>(customer, HttpHeaders.writableHttpHeaders(headers)),
+                new HttpEntity<>(customerDto, HttpHeaders.writableHttpHeaders(headers)),
                 new ParameterizedTypeReference<>() {
                 }
         );

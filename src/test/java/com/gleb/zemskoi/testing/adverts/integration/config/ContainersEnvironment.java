@@ -1,6 +1,6 @@
-package com.gleb.zemskoi.adverts.integration.config;
+package com.gleb.zemskoi.testing.adverts.integration.config;
 
-import com.gleb.zemskoi.adverts.integration.container.PostgresqlContainer;
+import com.gleb.zemskoi.testing.adverts.integration.container.PostgresqlContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 

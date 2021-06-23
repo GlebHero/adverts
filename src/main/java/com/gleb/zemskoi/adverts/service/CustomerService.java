@@ -5,11 +5,13 @@ import com.gleb.zemskoi.adverts.dao.CustomerRepository;
 import com.gleb.zemskoi.adverts.entity.db.Customer;
 import com.gleb.zemskoi.adverts.entity.dto.CustomerDto;
 import com.gleb.zemskoi.adverts.entity.enums.CustomerStatusEnum;
+import com.gleb.zemskoi.adverts.service.security.JwtUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -18,6 +20,7 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
     private final CustomerConverter customerConverter;
     private final PasswordEncoder bcryptEncoder;
+    private final JwtUserDetailsService jwtUserDetailsService;
 
     public CustomerDto findCustomerByUuid(UUID uuid) {
         Customer customer = customerRepository.findCustomerByUuid(uuid);
@@ -29,6 +32,10 @@ public class CustomerService {
         customer.setCustomerStatusEnum(CustomerStatusEnum.BLOCKED);
         customer.setUpdateDate(LocalDateTime.now());
         customerRepository.save(customer);
+    }
+
+    public List<CustomerDto> findAllCustomers() {
+        return customerConverter.toCustomerDtoList(customerRepository.findAll());
     }
 
     public CustomerDto saveCustomer(CustomerDto customerDto) {
@@ -43,6 +50,7 @@ public class CustomerService {
     }
 
     public CustomerDto updateCustomerByUuid(CustomerDto customerDto) {
+        jwtUserDetailsService.checkAvailabilityOperation(customerDto.getUuid());
         Customer customerByUuid = customerRepository.findCustomerByUuid(customerDto.getUuid());
         customerByUuid.setUpdateDate(LocalDateTime.now());
         Customer customer = customerConverter.toCustomerClone(customerDto, customerByUuid);

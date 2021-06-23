@@ -14,6 +14,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
 
 @RestController
 @CrossOrigin
@@ -31,7 +32,8 @@ public class JwtAuthenticationController {
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
-        final String token = jwtTokenUtil.generateToken(userDetails);
+        final UUID customerUUID = userDetailsService.getCustomerUUID(authenticationRequest.getUsername());
+        final String token = jwtTokenUtil.generateToken(userDetails, customerUUID);
 
         return new RestResponseEntity<>(new JwtResponse(token));
     }

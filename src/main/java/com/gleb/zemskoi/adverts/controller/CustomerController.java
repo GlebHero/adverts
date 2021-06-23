@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -44,5 +45,12 @@ public class CustomerController {
     @PutMapping(value = "update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public RestResponseEntity<CustomerDto> updateCustomerByUuid(@Valid @RequestBody CustomerDto customerDto) {
         return new RestResponseEntity<>(customerService.updateCustomerByUuid(customerDto));
+    }
+
+    @Operation(summary = "Find all customers")
+    @LogJournal
+    @GetMapping(value = "all", produces = MediaType.APPLICATION_JSON_VALUE)
+    public RestResponseEntity<List<CustomerDto>> findAllCustomers() {
+        return new RestResponseEntity<>(customerService.findAllCustomers());
     }
 }

@@ -1,5 +1,6 @@
 package com.gleb.zemskoi.adverts.config.security;
 
+import com.gleb.zemskoi.adverts.entity.common.CustomerInfo;
 import com.gleb.zemskoi.adverts.service.security.JwtUserDetailsService;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -22,6 +24,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     private final JwtUserDetailsService jwtUserDetailsService;
     private final JwtTokenUtil jwtTokenUtil;
+    private final CustomerInfo customerInfo;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
@@ -62,6 +65,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 // that the current user is authenticated. So it passes the
                 // Spring Security Configurations successfully.
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                UUID customerUuidFromJWTToken = jwtTokenUtil.getCustomerUuidFromJWTToken(jwtToken);
+                customerInfo.setCustomerUuid(customerUuidFromJWTToken);
             }
         }
         chain.doFilter(request, response);

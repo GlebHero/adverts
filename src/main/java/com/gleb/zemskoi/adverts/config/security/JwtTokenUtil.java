@@ -11,12 +11,15 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 
 @Component
 public class JwtTokenUtil implements Serializable {
 
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
+
+    private static final String CUSTOMER_UUID = "customerUUID";
 
     @Value("${jwt.secret}")
     private String secret;
@@ -37,6 +40,12 @@ public class JwtTokenUtil implements Serializable {
         return claimsResolver.apply(claims);
     }
 
+    public UUID getCustomerUuidFromJWTToken(String token) {
+        Claims body = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+        String customerUuid = body.get(CUSTOMER_UUID, String.class);
+        return UUID.fromString(customerUuid);
+    }
+
     //for retrieveing any information from token we will need the secret key
     private Claims getAllClaimsFromToken(String token) {
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
@@ -49,9 +58,10 @@ public class JwtTokenUtil implements Serializable {
     }
 
     //generate token for user
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(UserDetails userDetails, UUID customerUUID) {
         //here I can store some info about customer
         Map<String, Object> claims = new HashMap<>();
+        claims.put(CUSTOMER_UUID, customerUUID);
         return doGenerateToken(claims, userDetails.getUsername());
     }
 

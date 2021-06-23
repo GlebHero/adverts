@@ -1,4 +1,4 @@
-package unit.service;
+package com.gleb.zemskoi.testing.adverts.unit.service;
 
 import com.gleb.zemskoi.adverts.converter.AdvertConverter;
 import com.gleb.zemskoi.adverts.dao.AdvertRepository;
@@ -12,7 +12,12 @@ import com.gleb.zemskoi.adverts.entity.enums.AdvertStatusEnum;
 import com.gleb.zemskoi.adverts.service.AdvertService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -22,6 +27,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@ExtendWith(MockitoExtension.class)
 public class AdvertServiceTest {
 
     @Mock
@@ -35,7 +41,6 @@ public class AdvertServiceTest {
 
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.openMocks(this);
         List<Advert> adverts = new ArrayList<>();
         for(int i = 0; i < 10; i++) {
             adverts.add(new Advert(Long.valueOf(i), UUID.randomUUID(), "Test title" + i, "Test description" + i,

@@ -1,4 +1,4 @@
-package com.gleb.zemskoi.adverts.integration.common;
+package com.gleb.zemskoi.testing.adverts.integration.common;
 
 import com.gleb.zemskoi.adverts.entity.common.JwtRequest;
 import com.gleb.zemskoi.adverts.entity.common.JwtResponse;
