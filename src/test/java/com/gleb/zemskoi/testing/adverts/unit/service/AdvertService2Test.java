@@ -1,5 +1,6 @@
 package com.gleb.zemskoi.testing.adverts.unit.service;
 
+import com.gleb.zemskoi.adverts.converter.AdvertConverterImpl;
 import com.gleb.zemskoi.adverts.dao.AdvertRepository;
 import com.gleb.zemskoi.adverts.entity.common.Data;
 import com.gleb.zemskoi.adverts.entity.common.PageRequest;
@@ -25,7 +26,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest(classes = BeanConfigUnit.class)
+@SpringBootTest(classes = {BeanConfigUnit.class, AdvertConverterImpl.class})
 public class AdvertService2Test {
 
     @MockBean

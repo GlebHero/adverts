@@ -1,6 +1,7 @@
 package com.gleb.zemskoi.testing.adverts.unit.service;
 
 import com.gleb.zemskoi.adverts.converter.AdvertConverter;
+import com.gleb.zemskoi.adverts.converter.AdvertConverterImpl;
 import com.gleb.zemskoi.adverts.dao.AdvertRepository;
 import com.gleb.zemskoi.adverts.entity.common.Data;
 import com.gleb.zemskoi.adverts.entity.common.PageRequest;
@@ -34,7 +35,7 @@ public class AdvertServiceTest {
     private AdvertRepository advertRepository;
 
     @Spy
-    private AdvertConverter advertConverter;
+    private AdvertConverter advertConverter = new AdvertConverterImpl();
 
     @InjectMocks
     private AdvertService advertService;
