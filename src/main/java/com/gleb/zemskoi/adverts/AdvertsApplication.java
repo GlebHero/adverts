@@ -13,13 +13,13 @@ import java.util.TimeZone;
 @EnableAsync
 public class AdvertsApplication {
 
-	@PostConstruct
-	void started() {
-		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(AdvertsApplication.class, args);
+    }
 
-	public static void main(String[] args) {
-		SpringApplication.run(AdvertsApplication.class, args);
-	}
+    @PostConstruct
+    void started() {
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+    }
 
 }

@@ -7,9 +7,11 @@ import org.mapstruct.MappingTarget;
 
 import java.util.UUID;
 
-@Mapper( imports = UUID.class )
+@Mapper(imports = UUID.class)
 public interface AdvertConverter {
     AdvertDto toAdvertDto(Advert advert);
+
     Advert toAdvert(AdvertDto advertDto);
+
     Advert toAdvertClone(AdvertDto advertDto, @MappingTarget Advert advert);
 }

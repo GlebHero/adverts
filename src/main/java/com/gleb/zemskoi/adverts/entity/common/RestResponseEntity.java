@@ -1,7 +1,6 @@
 package com.gleb.zemskoi.adverts.entity.common;
 
 
-
 import java.util.ArrayList;
 import java.util.List;
 

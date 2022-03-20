@@ -17,6 +17,7 @@ public class AdvertStopWordService {
 
     /**
      * Check if new advert contains bad words from stop list.
+     *
      * @param advert
      * @return true if contains bad words.
      */

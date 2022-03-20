@@ -9,11 +9,14 @@ import org.mapstruct.MappingTarget;
 import java.util.List;
 import java.util.UUID;
 
-@Mapper( imports = UUID.class )
+@Mapper(imports = UUID.class)
 public interface CustomerConverter {
     @Mapping(target = "password", ignore = true)
     CustomerDto toCustomerDto(Customer customer);
+
     Customer toCustomer(CustomerDto customerDto);
+
     Customer toCustomerClone(CustomerDto customerDto, @MappingTarget Customer advert);
+
     List<CustomerDto> toCustomerDtoList(List<Customer> customer);
 }

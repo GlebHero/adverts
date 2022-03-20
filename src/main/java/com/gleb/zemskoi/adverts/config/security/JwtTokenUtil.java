@@ -17,6 +17,7 @@ import java.util.function.Function;
 @Component
 public class JwtTokenUtil implements Serializable {
 
+    //5 hours
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
 
     private static final String CUSTOMER_UUID = "customerUUID";

@@ -25,8 +25,8 @@ public class PriceFilter implements AdvertFilter {
     @Override
     public List<Advert> filter(List<Advert> advertList) {
         return advertList.stream()
-                .filter(advert -> advert.getPrice().compareTo(minPrice)>=0)
-                .filter(advert -> advert.getPrice().compareTo(maxPrice)<=0)
+                .filter(advert -> advert.getPrice().compareTo(minPrice) >= 0)
+                .filter(advert -> advert.getPrice().compareTo(maxPrice) <= 0)
                 .collect(Collectors.toList());
     }
 }
