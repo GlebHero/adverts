@@ -2,9 +2,8 @@ package com.gleb.zemskoi.adverts.entity.db;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.gleb.zemskoi.adverts.entity.enums.CustomerStatusEnum;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -13,10 +12,13 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
-@Data
-@NoArgsConstructor
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 @AllArgsConstructor
 @Entity
 public class Customer implements Serializable {
@@ -52,4 +54,17 @@ public class Customer implements Serializable {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "customer")
     @JsonManagedReference
     private List<Advert> adverts;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Customer customer = (Customer) o;
+        return id != null && Objects.equals(id, customer.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

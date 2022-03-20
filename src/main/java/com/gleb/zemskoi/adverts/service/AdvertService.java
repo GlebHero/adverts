@@ -29,7 +29,6 @@ public class AdvertService {
     private final CustomerRepository customerRepository;
     private final AdvertConverter advertConverter;
     private final Producer producer;
-    private final AdvertStopWordService advertStopWordService;
     private final CustomerInfo customerInfo;
     private final JwtUserDetailsService jwtUserDetailsService;
 
@@ -78,19 +77,17 @@ public class AdvertService {
 
     /**
      * Change default status REVIEW to another.
+     *
      * @param advert
      */
-    public void changeAdvertStatus(Advert advert) {
-        if (advertStopWordService.containsBadWord(advert)) {
-            advert.setAdvertStatusEnum(AdvertStatusEnum.CLOSED);
-        } else {
-            advert.setAdvertStatusEnum(AdvertStatusEnum.OPEN);
-        }
+    public void changeAdvertStatus(Advert advert, AdvertStatusEnum advertStatusEnum) {
+        advert.setAdvertStatusEnum(advertStatusEnum);
         advertRepository.save(advert);
     }
 
     /**
      * Set default values for new advert
+     *
      * @param advertDto
      * @return
      */
@@ -107,6 +104,7 @@ public class AdvertService {
 
     /**
      * Use income advertFilters to filter advert.
+     *
      * @param advertFilters
      * @return
      */
@@ -136,6 +134,7 @@ public class AdvertService {
 
     /**
      * Calculate page count uses totalSize and pageRequestSize from request. Result rounds up.
+     *
      * @param totalSize
      * @param pageRequestSize
      * @return
