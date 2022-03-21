@@ -12,6 +12,7 @@ import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -43,7 +44,11 @@ public class AttachmentService {
         }
     }
 
-    public Attachment downloadAttachment(UUID attachmentUuid) {
+    public Attachment downloadAttachmentByUuid(UUID attachmentUuid) {
         return attachmentRepository.findAttachmentByUuid(attachmentUuid);
+    }
+
+    public List<Attachment> downloadAllAttachmentsByAdvertUuid(UUID attachmentUuid) {
+        return attachmentRepository.findAllByAdvertUuid(attachmentUuid);
     }
 }
