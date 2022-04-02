@@ -1,6 +1,8 @@
 package com.gleb.zemskoi.adverts.config;
 
 import com.gleb.zemskoi.adverts.entity.common.CustomerInfo;
+import io.micrometer.core.aop.CountedAspect;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.annotation.RequestScope;
@@ -29,5 +31,10 @@ public class BeanConfiguration {
     @RequestScope
     public CustomerInfo customerInfo() {
         return new CustomerInfo();
+    }
+
+    @Bean
+    public CountedAspect countedAspect(MeterRegistry registry) {
+        return new CountedAspect(registry);
     }
 }

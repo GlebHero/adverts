@@ -16,7 +16,7 @@ public interface CustomerConverter {
 
     Customer toCustomer(CustomerDto customerDto);
 
-    Customer toCustomerClone(CustomerDto customerDto, @MappingTarget Customer advert);
+    Customer toCustomerClone(CustomerDto customerDto, @MappingTarget Customer customer);
 
     List<CustomerDto> toCustomerDtoList(List<Customer> customer);
 }

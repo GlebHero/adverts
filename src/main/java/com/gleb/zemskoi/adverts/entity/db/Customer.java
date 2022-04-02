@@ -17,7 +17,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@ToString
+@ToString(exclude = "password")
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Entity

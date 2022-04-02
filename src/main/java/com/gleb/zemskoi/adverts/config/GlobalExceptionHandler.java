@@ -40,7 +40,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<Object> handleNotFoundException(NotFoundException ex) {
         RestResponseEntity<Object> restResponseEntity = new RestResponseEntity<>(Collections.singletonList(new Error(ex.getClass().getSimpleName(), ex.getMessage())));
-        return new ResponseEntity<>(restResponseEntity, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(restResponseEntity, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(ForbiddenException.class)
