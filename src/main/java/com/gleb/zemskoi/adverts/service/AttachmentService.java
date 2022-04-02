@@ -6,7 +6,6 @@ import com.gleb.zemskoi.adverts.entity.common.CustomerInfo;
 import com.gleb.zemskoi.adverts.entity.db.Advert;
 import com.gleb.zemskoi.adverts.entity.db.Attachment;
 import com.gleb.zemskoi.adverts.entity.dto.AttachmentDto;
-import com.gleb.zemskoi.adverts.exception.ForbiddenException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
@@ -31,17 +30,13 @@ public class AttachmentService {
     @SneakyThrows
     private Attachment convertMultipartToAttachment(MultipartFile file, UUID advertUUID) {
         Advert advertByUuid = advertRepository.findAdvertByUuid(advertUUID);
-        if (customerInfo.getCustomerUuid().equals(advertByUuid.getCustomer().getUuid())) {
-            Attachment attachment = new Attachment();
-            attachment.setAdvert(advertByUuid);
-            attachment.setFileName(file.getOriginalFilename());
-            attachment.setFileType(file.getContentType());
-            attachment.setData(file.getBytes());
-            attachment.setUuid(UUID.randomUUID());
-            return attachment;
-        } else {
-            throw new ForbiddenException();
-        }
+        Attachment attachment = new Attachment();
+        attachment.setAdvert(advertByUuid);
+        attachment.setFileName(file.getOriginalFilename());
+        attachment.setFileType(file.getContentType());
+        attachment.setData(file.getBytes());
+        attachment.setUuid(UUID.randomUUID());
+        return attachment;
     }
 
     public Attachment downloadAttachmentByUuid(UUID attachmentUuid) {

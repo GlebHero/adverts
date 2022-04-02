@@ -50,7 +50,7 @@ public class CustomerService {
     }
 
     public CustomerDto updateCustomerByUuid(CustomerDto customerDto) {
-        jwtUserDetailsService.checkAvailabilityOperation(customerDto.getUuid());
+        jwtUserDetailsService.checkAvailabilityOperation(customerDto.getUuid()); //todo make this check in some filter
         Customer customerByUuid = customerRepository.findCustomerByUuid(customerDto.getUuid());
         customerByUuid.setUpdateDate(LocalDateTime.now());
         Customer customer = customerConverter.toCustomerClone(customerDto, customerByUuid);

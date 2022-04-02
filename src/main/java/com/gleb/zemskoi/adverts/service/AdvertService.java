@@ -67,7 +67,7 @@ public class AdvertService {
 
     public AdvertDto updateAdvertByUuid(AdvertDto advertDto) {
         Advert advertByUuid = advertRepository.findAdvertByUuid(advertDto.getUuid());
-        jwtUserDetailsService.checkAvailabilityOperation(advertByUuid.getCustomer().getUuid());
+        jwtUserDetailsService.checkAvailabilityOperation(advertByUuid.getCustomer().getUuid()); //todo make this check in some filter
         advertByUuid.setUpdateDate(LocalDateTime.now());
         advertByUuid = advertConverter.toAdvertClone(advertDto, advertByUuid);
         advertRepository.save(advertByUuid);
